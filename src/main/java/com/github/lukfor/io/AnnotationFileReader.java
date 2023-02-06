@@ -1,6 +1,7 @@
 package com.github.lukfor.io;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +25,13 @@ public class AnnotationFileReader {
 
 	private int indexAlt;
 
-	public AnnotationFileReader(String input, String[] columns, char separator) throws IOException {
+	public AnnotationFileReader(String input, String[] columns, char separator, boolean comments) throws IOException {
 
 		this.separator = separator;
 
-		CsvTableReader tableReader = new CsvTableReader(input, separator);
+		CsvTableReader tableReader = new CsvTableReader(input, separator, !comments);
+		
+		System.err.println("Detected columns: " + Arrays.toString(tableReader.getColumns()));
 
 		for (String column : columns) {
 			if (!tableReader.hasColumn(column)) {
@@ -44,13 +47,15 @@ public class AnnotationFileReader {
 
 	}
 
-	public AnnotationFileReader(String input, String[] columns, char separator, String ref, String alt)
+	public AnnotationFileReader(String input, String[] columns, char separator, boolean comments, String ref, String alt)
 			throws IOException {
 
 		this.separator = separator;
 
-		CsvTableReader tableReader = new CsvTableReader(input, separator);
+		CsvTableReader tableReader = new CsvTableReader(input, separator, !comments);
 
+		System.err.println("Detected columns: " + Arrays.toString(tableReader.getColumns()));
+		
 		checkAlleles = true;
 
 		if (!tableReader.hasColumn(ref)) {

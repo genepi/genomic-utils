@@ -2,14 +2,14 @@ package com.github.lukfor;
 
 import java.util.concurrent.Callable;
 
-import com.github.lukfor.commands.MergeCsvCommand;
+import com.github.lukfor.commands.AnnotateCommand;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 public class App {
 
-	public static final String APP = "tabix-merge";
+	public static final String APP = "tabix-mrge";
 
 	public static final String VERSION = "0.0.1";
 
@@ -21,15 +21,15 @@ public class App {
 
 	public static void main(String[] args) {
 
-		System.out.println();
-		System.out.println(APP + " " + VERSION);
+		System.err.println();
+		System.err.println(APP + " " + VERSION);
 		if (URL != null && !URL.isEmpty()) {
-			System.out.println(URL);
+			System.err.println(URL);
 		}
 		if (COPYRIGHT != null && !COPYRIGHT.isEmpty()) {
-			System.out.println(COPYRIGHT);
+			System.err.println(COPYRIGHT);
 		}
-		System.out.println();
+		System.err.println();
 
 		ARGS = args;
 
@@ -38,7 +38,7 @@ public class App {
 
 	}
 
-	@Command(name = App.APP, version = App.VERSION, subcommands = { MergeCsvCommand.class})
+	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class})
 	public static class DefaultCommand implements Callable<Integer> {
 
 		@Override

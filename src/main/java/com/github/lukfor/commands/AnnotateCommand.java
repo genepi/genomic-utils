@@ -1,21 +1,21 @@
 package com.github.lukfor.commands;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import com.github.lukfor.App;
 import com.github.lukfor.io.AnnotationFileReader;
+import com.github.lukfor.io.AnnotationMatchingStrategy;
 
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.writer.CsvTableWriter;
-import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Option;
 
-@Command(name = "merge", version = App.VERSION)
-public class MergeCsvCommand {
+@Command(name = "annotate", version = App.VERSION)
+public class AnnotateCommand implements Callable<Integer> {
 
 	@Option(names = { "--input" }, description = "Input filename", required = true)
 	private String input;
@@ -23,11 +23,8 @@ public class MergeCsvCommand {
 	@Option(names = { "--chr" }, description = "Chromosome column in input file", required = true)
 	private String chr;
 
-	@Option(names = { "--position" }, description = "Position column in input file", required = true)
+	@Option(names = { "--position", "--pos" }, description = "Position column in input file", required = true)
 	private String position;
-
-	@Option(names = { "--output" }, description = "Output filename", required = true)
-	private String output;
 
 	@Option(names = {
 			"--sep" }, description = "Separator of input file", required = false, showDefaultValue = Visibility.ALWAYS)
@@ -52,20 +49,29 @@ public class MergeCsvCommand {
 	private String alt = "ALT";
 
 	@Option(names = {
-			"--anno-ref" }, description = "Ref allele column in annotation fil", required = false, showDefaultValue = Visibility.ALWAYS)
+			"--anno-ref" }, description = "Ref allele column in annotation file", required = false, showDefaultValue = Visibility.ALWAYS)
 	private String annoRef = "REF";
 
 	@Option(names = {
-			"--anno-alt" }, description = "Alt allele column in annotation fil", required = false, showDefaultValue = Visibility.ALWAYS)
+			"--anno-alt" }, description = "Alt allele column in annotation file", required = false, showDefaultValue = Visibility.ALWAYS)
 	private String annoAlt = "ALT";
 
 	@Option(names = {
-			"--check-alleles" }, description = "Check for alleles", required = false, showDefaultValue = Visibility.ALWAYS)
-	private boolean checkAlleles = false;
+			"--anno-comments" }, description = "Activate this flag to ignore lines starting with # in annotation file", required = false, showDefaultValue = Visibility.ALWAYS)
+	private boolean annoComments = false;
 
 	@Option(names = {
-			"--allow-allele-switches" }, description = "Allow allele switches when check for alleles is enabled", required = false, showDefaultValue = Visibility.ALWAYS)
-	private boolean allowAlleleSwitch = false;
+			"--strategy" }, description = "Defines the matching strategy between lines in input file and annotation file", required = false, showDefaultValue = Visibility.ALWAYS)
+	private AnnotationMatchingStrategy strategy = AnnotationMatchingStrategy.CHROM_POS;
+
+	@Option(names = { "--output" }, description = "Output filename", required = true)
+	private String output;
+
+	@Option(names = { "--output-sep" }, description = "Separator of output file", required = false)
+	private char outputSep = '\t';
+
+	@Option(names = { "--output-quote" }, description = "Quote entries in output file", required = false)
+	private boolean outputQuote = false;
 
 	@Option(names = {
 			"--suppress-warnings" }, description = "Suppress warnings", required = false, showDefaultValue = Visibility.ALWAYS)
@@ -99,6 +105,10 @@ public class MergeCsvCommand {
 		this.output = output;
 	}
 
+	public void setOutputSep(char outputSep) {
+		this.outputSep = outputSep;
+	}
+
 	public void setSeparator(char separator) {
 		this.separator = separator;
 	}
@@ -119,12 +129,8 @@ public class MergeCsvCommand {
 		this.annoRef = annoRef;
 	}
 
-	public void setAllowAlleleSwitch(boolean allowAlleleSwitch) {
-		this.allowAlleleSwitch = allowAlleleSwitch;
-	}
-
-	public void setCheckAlleles(boolean checkAlleles) {
-		this.checkAlleles = checkAlleles;
+	public void setStrategy(AnnotationMatchingStrategy strategy) {
+		this.strategy = strategy;
 	}
 
 	public void setAnnoSparator(char annoSparator) {
@@ -154,10 +160,15 @@ public class MergeCsvCommand {
 
 		AnnotationFileReader annotationReader = null;
 
-		if (checkAlleles) {
-			annotationReader = new AnnotationFileReader(anno, annotationColumns, annoSparator, annoRef, annoAlt);
-		} else {
-			annotationReader = new AnnotationFileReader(anno, annotationColumns, annoSparator);
+		switch (strategy) {
+		case CHROM_POS:
+			annotationReader = new AnnotationFileReader(anno, annotationColumns, annoSparator, annoComments);
+			break;
+		case CHROM_POS_ALLELES:
+		case CHROM_POS_ALLELES_EXACT:
+			annotationReader = new AnnotationFileReader(anno, annotationColumns, annoSparator, annoComments, annoRef,
+					annoAlt);
+			break;
 		}
 
 		info("Load input file from '" + input + "'.");
@@ -174,9 +185,7 @@ public class MergeCsvCommand {
 			return 1;
 		}
 
-		// TODO: ref and alt allele? next step?
-
-		CsvTableWriter writer = new CsvTableWriter(output, separator);
+		CsvTableWriter writer = new CsvTableWriter(output, outputSep, outputQuote);
 		String[] inputColumns = reader.getColumns();
 		String[] outputColumns = concat(annotationColumns, inputColumns);
 
@@ -197,12 +206,17 @@ public class MergeCsvCommand {
 
 			List<Map<String, String>> annotations = null;
 
-			if (checkAlleles) {
+			switch (strategy) {
+			case CHROM_POS:
+				annotations = annotationReader.query(chrValue, positionValue);
+				break;
+			case CHROM_POS_ALLELES:
+			case CHROM_POS_ALLELES_EXACT:
 				String refValue = reader.getString(ref);
 				String altValue = reader.getString(alt);
-				annotations = annotationReader.query(chrValue, positionValue, refValue, altValue, allowAlleleSwitch);
-			} else {
-				annotations = annotationReader.query(chrValue, positionValue);
+				boolean allowAlleleSwitches = (strategy == AnnotationMatchingStrategy.CHROM_POS_ALLELES);
+				annotations = annotationReader.query(chrValue, positionValue, refValue, altValue, allowAlleleSwitches);
+				break;
 			}
 
 			if (annotations.size() == 1) {
@@ -242,21 +256,21 @@ public class MergeCsvCommand {
 	}
 
 	protected void error(String message) {
-		System.out.println("Error: " + message);
+		System.err.println("Error: " + message);
 	}
 
 	protected void warning(String message) {
 		if (!suppressWarnings) {
-			System.out.println("Warning: " + message);
+			System.err.println("Warning: " + message);
 		}
 	}
 
 	protected void info(String message) {
-		System.out.println(message);
+		System.err.println(message);
 	}
 
 	protected void success(String message) {
-		System.out.println(message);
+		System.err.println(message);
 	}
 
 }
