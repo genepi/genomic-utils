@@ -3,6 +3,11 @@
 > Merge csv file with with tabix indexed file.
 
 
+## Installation
+
+- Download tabix-merge.jar from [releases](https://github.com/lukfor/tabix-merge/releases)
+- Validate installation with java -jar tabix-merge.jar --version
+
 ## Index files
 
 ### Downloads a csv file from pheweb resources
