@@ -3,13 +3,14 @@ package com.github.lukfor;
 import java.util.concurrent.Callable;
 
 import com.github.lukfor.commands.AnnotateCommand;
+import com.github.lukfor.commands.VersionCommand;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 public class App {
 
-	public static final String APP = "tabix-mrge";
+	public static final String APP = "tabix-merge";
 
 	public static final String VERSION = "0.0.1";
 
@@ -38,7 +39,7 @@ public class App {
 
 	}
 
-	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class})
+	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class, VersionCommand.class})
 	public static class DefaultCommand implements Callable<Integer> {
 
 		@Override
