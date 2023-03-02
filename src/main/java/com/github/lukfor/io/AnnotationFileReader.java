@@ -101,8 +101,8 @@ public class AnnotationFileReader {
 			boolean match = true;
 			if (checkAlleles) {
 				
-				String annoRef = tiles[indexRef];
-				String annoAlt = tiles[indexAlt];
+				String annoRef = tiles[indexRef].trim();
+				String annoAlt = tiles[indexAlt].trim();
 				
 				if (allowAlleleSwitch) {
 					match = (annoRef.equalsIgnoreCase(ref) && containsAllele(annoAlt, alt))

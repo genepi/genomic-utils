@@ -212,8 +212,8 @@ public class AnnotateCommand implements Callable<Integer> {
 				break;
 			case CHROM_POS_ALLELES:
 			case CHROM_POS_ALLELES_EXACT:
-				String refValue = reader.getString(ref);
-				String altValue = reader.getString(alt);
+				String refValue = reader.getString(ref).trim();
+				String altValue = reader.getString(alt).trim();
 				boolean allowAlleleSwitches = (strategy == AnnotationMatchingStrategy.CHROM_POS_ALLELES);
 				annotations = annotationReader.query(chrValue, positionValue, refValue, altValue, allowAlleleSwitches);
 				break;
