@@ -25,6 +25,9 @@ public class LiftoverCommand {
 
 	@Option(names = { "--position" }, description = "Position column in input file", required = true)
 	private String position;
+	
+	@Option(names = { "--chain" }, description = "Chain file", required = true)
+	private String chainFile;
 
 	@Option(names = {
 			"--ref" }, description = "Ref allele column in input file", required = true, showDefaultValue = Visibility.ALWAYS)
@@ -55,8 +58,6 @@ public class LiftoverCommand {
 	private int failed = 0;
 
 	private int ignored = 0;
-
-	private String chainFile;
 
 	public static final Map<Character, Character> ALLELE_SWITCHES = new HashMap<Character, Character>();
 
