@@ -138,7 +138,7 @@ public class LiftoverCommand implements Callable<Integer> {
 		LiftOver liftOver = new LiftOver(new File(chainFile));
 
 		int row = 0;
-		writer.setColumns(reader.getColumns());
+	
 		try {
 
 			while (reader.next()) {
