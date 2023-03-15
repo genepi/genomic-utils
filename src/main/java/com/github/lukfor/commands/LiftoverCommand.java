@@ -3,9 +3,8 @@ package com.github.lukfor.commands;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.concurrent.Callable;
 import com.github.lukfor.App;
-
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.writer.CsvTableWriter;
 import htsjdk.samtools.liftover.LiftOver;
@@ -15,7 +14,7 @@ import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Option;
 
 @Command(name = "liftover", version = App.VERSION)
-public class LiftoverCommand {
+public class LiftoverCommand implements Callable<Integer> {
 
 	@Option(names = { "--input" }, description = "Input filename", required = true)
 	private String input;
