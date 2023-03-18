@@ -3,6 +3,7 @@ package com.github.lukfor;
 import java.util.concurrent.Callable;
 
 import com.github.lukfor.commands.AnnotateCommand;
+import com.github.lukfor.commands.LiftoverCommand;
 import com.github.lukfor.commands.VersionCommand;
 
 import picocli.CommandLine;
@@ -39,7 +40,7 @@ public class App {
 
 	}
 
-	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class, VersionCommand.class})
+	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class, LiftoverCommand.class, VersionCommand.class})
 	public static class DefaultCommand implements Callable<Integer> {
 
 		@Override
