@@ -1,10 +1,11 @@
-package com.github.lukfor.commands;
+package genepi.genomic.utils.commands;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import com.github.lukfor.App;
+
+import genepi.genomic.utils.App;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.writer.CsvTableWriter;
 import htsjdk.samtools.liftover.LiftOver;

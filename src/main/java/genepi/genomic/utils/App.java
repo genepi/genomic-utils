@@ -1,23 +1,22 @@
-package com.github.lukfor;
+package genepi.genomic.utils;
 
 import java.util.concurrent.Callable;
 
-import com.github.lukfor.commands.AnnotateCommand;
-import com.github.lukfor.commands.LiftoverCommand;
-import com.github.lukfor.commands.VersionCommand;
-
+import genepi.genomic.utils.commands.AnnotateCommand;
+import genepi.genomic.utils.commands.LiftoverCommand;
+import genepi.genomic.utils.commands.VersionCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 public class App {
 
-	public static final String APP = "tabix-merge";
+	public static final String APP = "genomic-utils";
 
 	public static final String VERSION = "0.1.0";
 
-	public static final String URL = "https://github.com/lukfor/tabix-merge";
+	public static final String URL = "https://github.com/genepi/genomic-utils";
 
-	public static final String COPYRIGHT = "(c) 2023 Lukas Forer";
+	public static final String COPYRIGHT = "(c) 2023 Lukas Forer and Sebastian Schönherr";
 
 	public static String[] ARGS = new String[0];
 

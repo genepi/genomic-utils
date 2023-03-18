@@ -1,4 +1,4 @@
-package com.github.lukfor.io;
+package genepi.genomic.utils.io;
 
 import java.io.IOException;
 import java.util.Arrays;

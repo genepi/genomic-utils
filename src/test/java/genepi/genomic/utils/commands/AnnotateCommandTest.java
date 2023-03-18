@@ -1,4 +1,4 @@
-package com.github.lukfor.commands;
+package genepi.genomic.utils.commands;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.github.lukfor.io.AnnotationMatchingStrategy;
+import genepi.genomic.utils.io.AnnotationMatchingStrategy;
 
 public class AnnotateCommandTest {
 

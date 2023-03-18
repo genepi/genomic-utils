@@ -1,13 +1,12 @@
-package com.github.lukfor.commands;
+package genepi.genomic.utils.commands;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import com.github.lukfor.App;
-import com.github.lukfor.io.AnnotationFileReader;
-import com.github.lukfor.io.AnnotationMatchingStrategy;
-
+import genepi.genomic.utils.App;
+import genepi.genomic.utils.io.AnnotationFileReader;
+import genepi.genomic.utils.io.AnnotationMatchingStrategy;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.writer.CsvTableWriter;
 import picocli.CommandLine.Command;
