@@ -74,6 +74,12 @@
 			<artifactId>genepi-io</artifactId>
 			<version>1.2.0</version>
 		</dependency>
+	
+		<dependency>
+			<groupId>com.github.lukfor</groupId>
+			<artifactId>magic-reports</artifactId>
+			<version>0.1.0</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>junit</groupId>

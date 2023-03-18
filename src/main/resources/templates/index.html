@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="{{application}}">
+  <meta name="generator" content="{{application}} {{version}}">
+  <title>Report</title>
+  {{include_style("https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css")}}
+  {{include_style("https://cdn.datatables.net/1.13.3/css/dataTables.bootstrap4.min.css")}}
+</head>
+
+
+<body>
+
+  <div class="container-fluid">
+    <div class="row mt-3">
+      <div class="col">
+        <h1>{{title}}</h1>
+      </div>
+    </div>
+    
+    <div class="row mt-3">
+      <div class="col">
+        <h2>Manhattan Plot</h2>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <div id="plot" style="height: {{manhattan.getHeight()}}px;" class="""></div>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col">
+        <h2>Top Loci</h2>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col">
+        <table id="table-loci" class="table table-sm">
+          <thead>
+            <tr>
+              <th>Variant</th>
+              <th>ID</th>
+              <th>Ref Allele</th>
+              <th>Effect Allele</th>
+              <th>Nearest Gene</th>
+              <th>-log<sub>10</sub>(<i>P</i>)</th>
+              <th>Beta</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{for peak in peaks}}
+            <tr>
+              <td>
+                {{peak.chrom}}:{{peak.pos}}
+              </td>
+              <td>
+                {{if peak.id != null && peak.id.startsWith("rs")}}
+                  <a href="https://www.ncbi.nlm.nih.gov/snp/{{peak.id}}" target="_blank">
+                    {{peak.getName()}}
+                  </a>
+                {{else}}
+                  -
+                {{end}}
+              </td>
+              <td>
+                {{peak.ref}}
+              </td>
+              <td>
+                {{peak.alt}}
+              </td>            
+              <td>
+                {{peak.gene}}
+              </td>
+              <td>
+                {{peak.pval}}
+              </td>
+              <td>
+                {{peak.beta}}
+              </td>          
+            </tr>
+            {{end}}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  {{include_script("https://code.jquery.com/jquery-3.5.1.slim.min.js")}}
+  {{include_script("https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js")}}
+  {{include_script("https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js")}}
+  {{include_script("https://cdn.plot.ly/plotly-latest.min.js")}}
+  {{include_script("https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js")}}
+  {{include_script("https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js")}}
+  {{include_script("https://cdn.datatables.net/1.13.3/js/dataTables.bootstrap4.min.js")}}
+
+  <script>
+
+    function init() {
+      var data = {{ json(manhattan.getData())}};
+      var layout = {{ json(manhattan.getLayout())}};
+      var config = {
+        responsive: true,
+        displayModeBar: false
+      };      
+      Plotly.newPlot('plot', data, layout, config);
+
+      $('#table-loci').DataTable({
+        pageLength: 20,
+        order: [[5, 'desc']],
+      });
+    };
+
+
+    $(document).ready(init);
+
+  </script>
+
+</html>

@@ -3,6 +3,7 @@ package genepi.genomic.utils;
 import java.util.concurrent.Callable;
 
 import genepi.genomic.utils.commands.AnnotateCommand;
+import genepi.genomic.utils.commands.GwasReportCommand;
 import genepi.genomic.utils.commands.LiftoverCommand;
 import genepi.genomic.utils.commands.VersionCommand;
 import picocli.CommandLine;
@@ -39,7 +40,8 @@ public class App {
 
 	}
 
-	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class, LiftoverCommand.class, VersionCommand.class})
+	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class, LiftoverCommand.class,
+			GwasReportCommand.class, VersionCommand.class })
 	public static class DefaultCommand implements Callable<Integer> {
 
 		@Override

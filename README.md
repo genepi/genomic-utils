@@ -12,6 +12,7 @@
 ## Commands
 
 - [`annotate`](docs/annotate.md)
+- [`gwas-report`](docs/gwas-report.md)
 - [`liftover`](docs/liftover.md)
 
 ## License
