@@ -11,8 +11,8 @@
 
 ## Commands
 
-- `[annotate](docs/annotate.md)`
-- `[liftover](docs/liftover.md)`
+- [`annotate`](docs/annotate.md)
+- [`liftover`](docs/liftover.md)
 
 ## License
 
