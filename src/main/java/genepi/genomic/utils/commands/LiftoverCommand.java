@@ -187,8 +187,8 @@ public class LiftoverCommand implements Callable<Integer> {
 					}
 				}
 
-				String effectAllele = reader.getString(ref);
-				String otherAllele = reader.getString(alt);
+				String refAllele = reader.getString(ref);
+				String altAllele = reader.getString(alt);
 
 				if (!ignore) {
 
@@ -213,7 +213,7 @@ public class LiftoverCommand implements Callable<Integer> {
 
 					String id = orginalContig + ":" + originalPosition;
 
-					int length = otherAllele.length();
+					int length = altAllele.length();
 					if (length == 0) {
 						length = 1;
 					}
@@ -236,33 +236,25 @@ public class LiftoverCommand implements Callable<Integer> {
 
 							} else {
 
-								if (otherAllele != null && effectAllele != null) {
+								String reftAlleleNorm = refAllele;
+								String altAlleleeNorm = altAllele;
 
-									String effectAlleleNorm = effectAllele;
-									String otherAlleleeNorm = otherAllele;
-
-									if (target.isNegativeStrand()) {
-										effectAlleleNorm = flip(effectAllele);
-										otherAlleleeNorm = flip(otherAllele);
-										writer.setString(ref, effectAlleleNorm);
-										writer.setString(alt, otherAlleleeNorm);
-									}
-
-									writer.setString(chr, newContig);
-									writer.setInteger(position, target.getStart());
-									
-									if (updateId) {
-										writer.setString(snpId, newContig + ":" + target.getStart() + ":"
-												+ effectAlleleNorm + ":" + otherAlleleeNorm);
-									}
-									resolved++;
-
-								} else {
-
-									warning(id + "\t" + "LiftOver" + "\t" + "Indel on negative strand. SNP removed.");
-									ignore = true;
-									failed++;
+								if (target.isNegativeStrand()) {
+									reftAlleleNorm = flip(refAllele);
+									altAlleleeNorm = flip(altAllele);
+									writer.setString(ref, reftAlleleNorm);
+									writer.setString(alt, altAlleleeNorm);
 								}
+
+								writer.setString(chr, newContig);
+								writer.setInteger(position, target.getStart());
+
+								if (updateId) {
+									writer.setString(snpId, newContig + ":" + target.getStart() + ":" + reftAlleleNorm
+											+ ":" + altAlleleeNorm);
+								}
+								resolved++;
+
 							}
 
 						} else {
