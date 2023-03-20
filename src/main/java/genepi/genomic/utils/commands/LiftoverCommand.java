@@ -25,7 +25,7 @@ public class LiftoverCommand implements Callable<Integer> {
 
 	@Option(names = { "--position" }, description = "Position column in input file", required = true)
 	private String position;
-	
+
 	@Option(names = { "--chain" }, description = "Chain file", required = true)
 	private String chainFile;
 
@@ -51,6 +51,13 @@ public class LiftoverCommand implements Callable<Integer> {
 			"--suppress-warnings" }, description = "Suppress warnings", required = false, showDefaultValue = Visibility.ALWAYS)
 	private boolean suppressWarnings = false;
 
+	@Option(names = {
+			"--update-id" }, description = "Activate this flag to update the ID column", required = false, showDefaultValue = Visibility.ALWAYS)
+	private boolean updateId = false;
+
+	@Option(names = { "--id" }, description = "ID column in input file", required = false)
+	private String snpId;
+
 	private int total = 0;
 
 	private int resolved = 0;
@@ -58,6 +65,8 @@ public class LiftoverCommand implements Callable<Integer> {
 	private int failed = 0;
 
 	private int ignored = 0;
+	
+	private int flipped = 0;
 
 	public static final Map<Character, Character> ALLELE_SWITCHES = new HashMap<Character, Character>();
 
@@ -88,6 +97,21 @@ public class LiftoverCommand implements Callable<Integer> {
 		this.outputSep = outputSep;
 	}
 
+	public void setAlt(String alt) {
+		this.alt = alt;
+	}
+	
+	public void setRef(String ref) {
+		this.ref = ref;
+	}
+	public void setUpdateId(boolean updateId) {
+		this.updateId = updateId;
+	}
+	
+	public void setSnpId(String snpId) {
+		this.snpId = snpId;
+	}
+	
 	public void setSeparator(char separator) {
 		this.separator = separator;
 	}
@@ -106,6 +130,10 @@ public class LiftoverCommand implements Callable<Integer> {
 
 	public int getResolved() {
 		return resolved;
+	}
+
+	public int getFlipped() {
+		return flipped;
 	}
 	
 	public void setChainFile(String chainFile) {
@@ -133,13 +161,23 @@ public class LiftoverCommand implements Callable<Integer> {
 			return 1;
 		}
 
+		if (updateId && snpId == null) {
+			error("ID Column not set in file '" + input + "'");
+			return 1;
+		}
+
+		if (updateId && !reader.hasColumn(snpId)) {
+			error("Column '" + snpId + "' not found in file '" + input + "'");
+			return 1;
+		}
+
 		CsvTableWriter writer = new CsvTableWriter(output, outputSep, false);
 		writer.setColumns(reader.getColumns());
 
 		LiftOver liftOver = new LiftOver(new File(chainFile));
 
 		int row = 0;
-	
+
 		try {
 
 			while (reader.next()) {
@@ -169,10 +207,9 @@ public class LiftoverCommand implements Callable<Integer> {
 						ignore = true;
 					}
 				}
-				
-				 String effectAllele = reader.getString(ref);
-				 String otherAllele = reader.getString(alt);
-				
+
+				String refAllele = reader.getString(ref);
+				String altAllele = reader.getString(alt);
 
 				if (!ignore) {
 
@@ -197,7 +234,7 @@ public class LiftoverCommand implements Callable<Integer> {
 
 					String id = orginalContig + ":" + originalPosition;
 
-					int length = otherAllele.length();
+					int length = altAllele.length();
 					if (length == 0) {
 						length = 1;
 					}
@@ -220,28 +257,29 @@ public class LiftoverCommand implements Callable<Integer> {
 
 							} else {
 
+								String reftAlleleNorm = refAllele;
+								String altAlleleeNorm = altAllele;
+
 								if (target.isNegativeStrand()) {
-
-									writer.setString(ref, flip(effectAllele));
-									writer.setString(alt, flip(otherAllele));
+									reftAlleleNorm = flip(refAllele);
+									altAlleleeNorm = flip(altAllele);
+									writer.setString(ref, reftAlleleNorm);
+									writer.setString(alt, altAlleleeNorm);
+									flipped++;
 								}
 
-								if (otherAllele != null && effectAllele != null) {
+								writer.setString(chr, newContig);
+								writer.setInteger(position, target.getStart());
 
-									writer.setString(chr, newContig);
-									writer.setInteger(position, target.getStart());
-									resolved++;
-
-								} else {
-
-									warning(id + "\t" + "LiftOver" + "\t" + "Indel on negative strand. SNP removed.");
-									ignore = true;
-									failed++;
+								if (updateId) {
+									writer.setString(snpId, newContig + ":" + target.getStart() + ":" + reftAlleleNorm
+											+ ":" + altAlleleeNorm);
 								}
+								resolved++;
+
 							}
 
 						} else {
-
 							warning(id + "\t" + "LiftOver" + "\t"
 									+ "On different chromosome after LiftOver. SNP removed.");
 							ignore = true;
