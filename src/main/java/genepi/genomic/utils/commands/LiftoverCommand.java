@@ -65,6 +65,8 @@ public class LiftoverCommand implements Callable<Integer> {
 	private int failed = 0;
 
 	private int ignored = 0;
+	
+	private int flipped = 0;
 
 	public static final Map<Character, Character> ALLELE_SWITCHES = new HashMap<Character, Character>();
 
@@ -95,6 +97,21 @@ public class LiftoverCommand implements Callable<Integer> {
 		this.outputSep = outputSep;
 	}
 
+	public void setAlt(String alt) {
+		this.alt = alt;
+	}
+	
+	public void setRef(String ref) {
+		this.ref = ref;
+	}
+	public void setUpdateId(boolean updateId) {
+		this.updateId = updateId;
+	}
+	
+	public void setSnpId(String snpId) {
+		this.snpId = snpId;
+	}
+	
 	public void setSeparator(char separator) {
 		this.separator = separator;
 	}
@@ -115,6 +132,10 @@ public class LiftoverCommand implements Callable<Integer> {
 		return resolved;
 	}
 
+	public int getFlipped() {
+		return flipped;
+	}
+	
 	public void setChainFile(String chainFile) {
 		this.chainFile = chainFile;
 	}
@@ -244,6 +265,7 @@ public class LiftoverCommand implements Callable<Integer> {
 									altAlleleeNorm = flip(altAllele);
 									writer.setString(ref, reftAlleleNorm);
 									writer.setString(alt, altAlleleeNorm);
+									flipped++;
 								}
 
 								writer.setString(chr, newContig);
@@ -258,7 +280,6 @@ public class LiftoverCommand implements Callable<Integer> {
 							}
 
 						} else {
-
 							warning(id + "\t" + "LiftOver" + "\t"
 									+ "On different chromosome after LiftOver. SNP removed.");
 							ignore = true;
