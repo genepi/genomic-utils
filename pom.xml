@@ -27,7 +27,7 @@
 			<email>lukas@forer.it</email>
 		</developer>
 		<developer>
-			<id>seppihno</id>
+			<id>seppinho</id>
 			<name>Sebastian Schönherr</name>
 		</developer>		
 	</developers>
@@ -108,7 +108,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>genepi.genetic.utils.App</mainClass>
+									<mainClass>genepi.genomic.utils.App</mainClass>
 								</transformer>
 							</transformers>
 							<filters>
