@@ -25,7 +25,7 @@ public class LiftoverCommand implements Callable<Integer> {
 
 	@Option(names = { "--position" }, description = "Position column in input file", required = true)
 	private String position;
-	
+
 	@Option(names = { "--chain" }, description = "Chain file", required = true)
 	private String chainFile;
 
@@ -50,6 +50,13 @@ public class LiftoverCommand implements Callable<Integer> {
 	@Option(names = {
 			"--suppress-warnings" }, description = "Suppress warnings", required = false, showDefaultValue = Visibility.ALWAYS)
 	private boolean suppressWarnings = false;
+
+	@Option(names = {
+			"--update-id" }, description = "Activate this flag to update the ID column", required = false, showDefaultValue = Visibility.ALWAYS)
+	private boolean updateId = false;
+
+	@Option(names = { "--id" }, description = "ID column in input file", required = false)
+	private String snpId;
 
 	private int total = 0;
 
@@ -107,7 +114,7 @@ public class LiftoverCommand implements Callable<Integer> {
 	public int getResolved() {
 		return resolved;
 	}
-	
+
 	public void setChainFile(String chainFile) {
 		this.chainFile = chainFile;
 	}
@@ -133,13 +140,23 @@ public class LiftoverCommand implements Callable<Integer> {
 			return 1;
 		}
 
+		if (updateId && snpId == null) {
+			error("ID Column not set in file '" + input + "'");
+			return 1;
+		}
+
+		if (updateId && !reader.hasColumn(snpId)) {
+			error("Column '" + snpId + "' not found in file '" + input + "'");
+			return 1;
+		}
+
 		CsvTableWriter writer = new CsvTableWriter(output, outputSep, false);
 		writer.setColumns(reader.getColumns());
 
 		LiftOver liftOver = new LiftOver(new File(chainFile));
 
 		int row = 0;
-	
+
 		try {
 
 			while (reader.next()) {
@@ -169,10 +186,9 @@ public class LiftoverCommand implements Callable<Integer> {
 						ignore = true;
 					}
 				}
-				
-				 String effectAllele = reader.getString(ref);
-				 String otherAllele = reader.getString(alt);
-				
+
+				String effectAllele = reader.getString(ref);
+				String otherAllele = reader.getString(alt);
 
 				if (!ignore) {
 
@@ -220,16 +236,25 @@ public class LiftoverCommand implements Callable<Integer> {
 
 							} else {
 
-								if (target.isNegativeStrand()) {
-
-									writer.setString(ref, flip(effectAllele));
-									writer.setString(alt, flip(otherAllele));
-								}
-
 								if (otherAllele != null && effectAllele != null) {
+
+									String effectAlleleNorm = effectAllele;
+									String otherAlleleeNorm = otherAllele;
+
+									if (target.isNegativeStrand()) {
+										effectAlleleNorm = flip(effectAllele);
+										otherAlleleeNorm = flip(otherAllele);
+										writer.setString(ref, effectAlleleNorm);
+										writer.setString(alt, otherAlleleeNorm);
+									}
 
 									writer.setString(chr, newContig);
 									writer.setInteger(position, target.getStart());
+									
+									if (updateId) {
+										writer.setString(snpId, newContig + ":" + target.getStart() + ":"
+												+ effectAlleleNorm + ":" + otherAlleleeNorm);
+									}
 									resolved++;
 
 								} else {
