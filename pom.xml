@@ -4,14 +4,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.lukfor</groupId>
-	<artifactId>tabix-merge</artifactId>
+	<groupId>genepi</groupId>
+	<artifactId>genomic-utils</artifactId>
 	<version>0.1.0</version>
 	<packaging>jar</packaging>
 
-	<name>tabix-merge</name>
-	<description>Merge two files with based on tabix indicies</description>
-	<url>http://forer.it/tabix-merge</url>
+	<name>genomic-utils</name>
+	<description>Collection of tools to work with genomic datsets</description>
+	<url>https://github.com/genepi/genomic-utils</url>
 
 	<licenses>
 		<license>
@@ -26,12 +26,16 @@
 			<name>Lukas Forer</name>
 			<email>lukas@forer.it</email>
 		</developer>
+		<developer>
+			<id>seppihno</id>
+			<name>Sebastian Schönherr</name>
+		</developer>		
 	</developers>
 
 	<scm>
-		<url>https://github.com/lukfor/tabix-merge/tree/master</url>
-		<connection>scm:git:https://github.com/lukfor/tabix-merge.git</connection>
-		<developerConnection>scm:git:ssh://github.com:lukfor/magic-progress.git</developerConnection>
+		<url>https://github.com/genepi/genomic-utils/tree/master</url>
+		<connection>scm:git:https://github.com/genepi/genomic-utils.git</connection>
+		<developerConnection>scm:git:ssh://github.com:genepi/genomic-utils.git</developerConnection>
 	</scm>
 
 	<properties>
@@ -70,6 +74,12 @@
 			<artifactId>genepi-io</artifactId>
 			<version>1.2.0</version>
 		</dependency>
+	
+		<dependency>
+			<groupId>com.github.lukfor</groupId>
+			<artifactId>magic-reports</artifactId>
+			<version>0.1.0</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>junit</groupId>
@@ -98,7 +108,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.github.lukfor.App</mainClass>
+									<mainClass>genepi.genetic.utils.App</mainClass>
 								</transformer>
 							</transformers>
 							<filters>

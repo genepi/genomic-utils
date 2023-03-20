@@ -1,9 +1,8 @@
-package com.github.lukfor.commands;
+package genepi.genomic.utils.commands;
 
 import java.util.concurrent.Callable;
 
-import com.github.lukfor.App;
-
+import genepi.genomic.utils.App;
 import picocli.CommandLine.Command;
 
 @Command(name = "version", version = App.VERSION)
