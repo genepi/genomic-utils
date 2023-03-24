@@ -9,7 +9,7 @@ Create a html report from file `regenie.txt.gz` and store output in `regenie.rep
 
 ```
 java -jar genomic-utils.jar gwas-report \
-  --input regenie.txt.gz \
+  regenie.txt.gz \
   --output regenie.report.html
 ```
 
@@ -17,7 +17,7 @@ If the columns in your file are different from regenie, you could set them manua
 
 ```
 java -jar genomic-utils.jar gwas-report \
-  --input regenie.txt.gz \
+  regenie.txt.gz \
   --chr CHROM \
   --pos GENPOS \
   --pval LOG10P \
@@ -31,7 +31,7 @@ You could use the `annotate` command to annotate results from regenie with rsids
 
 ```
 java -jar genomic-utils.jar gwas-report \
-  --input regenie.annotated.txt.gz \
+  regenie.annotated.txt.gz \
   --chr CHROM \
   --pos GENPOS \
   --pval LOG10P \
@@ -47,7 +47,7 @@ You could use `--gene` to define which column contains the gene name and `--anot
 
 ```
 java -jar genomic-utils.jar gwas-report \
-  --input regenie.annotated.txt.gz \
+  regenie.annotated.txt.gz \
   --chr CHROM \
   --pos GENPOS \
   --pval LOG10P \
@@ -66,7 +66,7 @@ Bins variants in `regenie.txt.gz` and store binned infos in `regenie.report.txt`
 
 ```
 java -jar genomic-utils.jar gwas-report \
-  --input regenie.txt.gz \
+  regenie.txt.gz \
   --chr CHROM \
   --pos GENPOS \
   --pval LOG10P \
