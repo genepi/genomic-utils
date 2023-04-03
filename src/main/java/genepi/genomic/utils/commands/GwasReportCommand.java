@@ -17,6 +17,7 @@ import genepi.genomic.utils.commands.gwas.report.manhattan.ManhattanPlot;
 import genepi.genomic.utils.commands.gwas.report.manhattan.ManhattanPlotWriter;
 import genepi.genomic.utils.commands.gwas.util.AnnotationType;
 import genepi.genomic.utils.commands.gwas.util.BinningAlgorithm;
+import genepi.genomic.utils.commands.gwas.util.IndexCreationMode;
 import genepi.genomic.utils.commands.gwas.util.OutputFormat;
 import genepi.genomic.utils.commands.gwas.util.PValFormat;
 import genepi.io.table.reader.CsvTableReader;
@@ -108,6 +109,9 @@ public class GwasReportCommand implements Callable<Integer> {
 			"--peak-variant-Counting-pval-threshold" }, description = "peak-variant-Counting-pval-threshold", required = false, showDefaultValue = Visibility.ALWAYS)
 	private double peakVariantCountingPvalThreshold = Binner.DEFAULT_PEAK_VARIANT_COUNTING_PVAL_THRESHOLD;
 
+	@Option(names = { "--index" }, description = "Create index html file. Possible values: ${COMPLETION-CANDIDATES}", required = false)
+	private IndexCreationMode index = IndexCreationMode.AUTO;
+	
 	public void setFiles(List<File> files) {
 		this.files = files;
 	}
@@ -196,6 +200,10 @@ public class GwasReportCommand implements Callable<Integer> {
 		this.peakVariantCountingPvalThreshold = peakVariantCountingPvalThreshold;
 	}
 
+	public void setIndex(IndexCreationMode index) {
+		this.index = index;
+	}
+	
 	@Override
 	public Integer call() throws Exception {
 
@@ -204,7 +212,7 @@ public class GwasReportCommand implements Callable<Integer> {
 			return 1;
 		}
 
-		if (files.size() == 1) {
+		if (files.size() == 1 && index == IndexCreationMode.AUTO) {
 			ManhattanPlot result = createHtmlReport(title, files.get(0), output);
 			if (result != null) {
 				return 0;
