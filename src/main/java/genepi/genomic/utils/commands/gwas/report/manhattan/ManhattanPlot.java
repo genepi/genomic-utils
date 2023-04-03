@@ -41,6 +41,8 @@ public class ManhattanPlot {
 
 	public static final int HEIGHT = 550;
 
+	public static final double MAX_LIMIT = 100;
+
 	private double suggestiveSignificanceLine = DEFAULT_SUGGESTIVE_SIGNIFICANCE_LINE;
 
 	private double genomwideSignificanceLine = DEFAULT_GENOMEWIDE_SIGNIFICANCE_LINE;
@@ -117,7 +119,8 @@ public class ManhattanPlot {
 				if (!line[0].equals(line[1])) {
 					countLines++;
 					double x = (singleBin.startpos / BIN_SIZE) + offset;
-					Map<String, Object> shape = PlotlyUtil.createLine(x, line[0], x, line[1], color, POINT_SIZE);
+					Map<String, Object> shape = PlotlyUtil.createLine(x, mapY(line[0]), x, mapY(line[1]), color,
+							POINT_SIZE);
 					shapes.add(shape);
 				}
 			}
@@ -138,7 +141,7 @@ public class ManhattanPlot {
 					countPoints++;
 					double x0 = (singleBin.startpos / BIN_SIZE) + offset;
 					x.add(x0);
-					y.add(line[0]);
+					y.add(mapY(line[0]));
 				}
 			}
 		}
@@ -260,13 +263,13 @@ public class ManhattanPlot {
 		ChromBin bin = bins.get(chrIndex);
 		for (Variant variant : bin.getUnbinnedVariants()) {
 			x.add((variant.pos / BIN_SIZE) + offset);
-			y.add(variant.pval);
+			y.add(mapY(variant.pval));
 			text.add(variant.getDetails());
 
 		}
 		for (Variant variant : bin.getPeakVariants()) {
 			x.add((variant.pos / BIN_SIZE) + offset);
-			y.add(variant.pval);
+			y.add(mapY(variant.pval));
 			text.add(variant.getDetails());
 		}
 		trace.put("x", x);
@@ -292,7 +295,7 @@ public class ManhattanPlot {
 		for (Variant variant : bin.getPeakVariants()) {
 			Map<String, Object> annotation = new HashMap<>();
 			annotation.put("x", (variant.pos / BIN_SIZE) + offset);
-			annotation.put("y", variant.pval);
+			annotation.put("y", mapY(variant.pval));
 			annotation.put("xref", "x");
 			annotation.put("yref", "y");
 			if (annotationType == AnnotationType.GENE) {
@@ -347,6 +350,14 @@ public class ManhattanPlot {
 
 	public int getHeight() {
 		return HEIGHT;
+	}
+
+	protected double mapY(double value) {
+		if (value >= MAX_LIMIT) {
+			return MAX_LIMIT;
+		} else {
+			return value;
+		}
 	}
 
 }
