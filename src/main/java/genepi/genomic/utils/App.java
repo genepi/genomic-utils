@@ -3,10 +3,13 @@ package genepi.genomic.utils;
 import java.util.concurrent.Callable;
 
 import genepi.genomic.utils.commands.AnnotateCommand;
+import genepi.genomic.utils.commands.CsvToBedCommand;
 import genepi.genomic.utils.commands.GwasReportCommand;
 import genepi.genomic.utils.commands.LiftoverCommand;
 import genepi.genomic.utils.commands.VcfQualityControlCommand;
 import genepi.genomic.utils.commands.VcfStatisticsCommand;
+import genepi.genomic.utils.commands.VcfToCsvCommand;
+import genepi.genomic.utils.commands.VcfToCsvTransposeCommand;
 import genepi.genomic.utils.commands.VersionCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -43,7 +46,8 @@ public class App {
 	}
 
 	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class, LiftoverCommand.class,
-			GwasReportCommand.class, VcfStatisticsCommand.class, VcfQualityControlCommand.class, VersionCommand.class })
+			GwasReportCommand.class, VcfStatisticsCommand.class, VcfQualityControlCommand.class, CsvToBedCommand.class,
+			VcfToCsvCommand.class, VcfToCsvTransposeCommand.class, VersionCommand.class })
 	public static class DefaultCommand implements Callable<Integer> {
 
 		@Override
