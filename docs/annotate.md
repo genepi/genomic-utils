@@ -16,7 +16,7 @@ wget https://resources.pheweb.org/rsids-v154-hg19.tsv.gz
 Add header, convert to bgzip format and create index on `CHROM` and `POS`:
 
 ```
-echo "CHROM\tPOS\tRSID\tREF\tALT" | bgzip -c > rsids-v154-hg19.index.gz
+echo -e "CHROM\tPOS\tRSID\tREF\tALT" | bgzip -c > rsids-v154-hg19.index.gz
 gzcat rsids-v154-hg19.tsv.gz | bgzip -c >> rsids-v154-hg19.index.gz
 tabix -s1 -b2 -e2 -S1 rsids-v154-hg19.index.gz
 ```
