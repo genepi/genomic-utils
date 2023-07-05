@@ -5,6 +5,8 @@ import java.util.concurrent.Callable;
 import genepi.genomic.utils.commands.AnnotateCommand;
 import genepi.genomic.utils.commands.GwasReportCommand;
 import genepi.genomic.utils.commands.LiftoverCommand;
+import genepi.genomic.utils.commands.VcfQualityControlCommand;
+import genepi.genomic.utils.commands.VcfStatisticsCommand;
 import genepi.genomic.utils.commands.VersionCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -41,7 +43,7 @@ public class App {
 	}
 
 	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class, LiftoverCommand.class,
-			GwasReportCommand.class, VersionCommand.class })
+			GwasReportCommand.class, VcfStatisticsCommand.class, VcfQualityControlCommand.class, VersionCommand.class })
 	public static class DefaultCommand implements Callable<Integer> {
 
 		@Override
