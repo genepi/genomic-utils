@@ -1,20 +1,19 @@
-package genepi.genomic.utils.commands;
+package genepi.genomic.utils.commands.liftover;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import genepi.genomic.utils.App;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.writer.CsvTableWriter;
 import htsjdk.samtools.liftover.LiftOver;
 import htsjdk.samtools.util.Interval;
-import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Visibility;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "liftover", version = App.VERSION)
+@Command
 public class LiftoverCommand implements Callable<Integer> {
 
 	@Option(names = { "--input" }, description = "Input filename", required = true)
@@ -65,7 +64,7 @@ public class LiftoverCommand implements Callable<Integer> {
 	private int failed = 0;
 
 	private int ignored = 0;
-	
+
 	private int flipped = 0;
 
 	public static final Map<Character, Character> ALLELE_SWITCHES = new HashMap<Character, Character>();
@@ -100,18 +99,19 @@ public class LiftoverCommand implements Callable<Integer> {
 	public void setAlt(String alt) {
 		this.alt = alt;
 	}
-	
+
 	public void setRef(String ref) {
 		this.ref = ref;
 	}
+
 	public void setUpdateId(boolean updateId) {
 		this.updateId = updateId;
 	}
-	
+
 	public void setSnpId(String snpId) {
 		this.snpId = snpId;
 	}
-	
+
 	public void setSeparator(char separator) {
 		this.separator = separator;
 	}
@@ -135,7 +135,7 @@ public class LiftoverCommand implements Callable<Integer> {
 	public int getFlipped() {
 		return flipped;
 	}
-	
+
 	public void setChainFile(String chainFile) {
 		this.chainFile = chainFile;
 	}

@@ -1,18 +1,17 @@
-package genepi.genomic.utils.commands;
+package genepi.genomic.utils.commands.vcf;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.concurrent.Callable;
 
-import genepi.genomic.utils.App;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFFileReader;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-
-@Command(name = "vcf-statistics", version = App.VERSION)
+@Command
 public class VcfStatisticsCommand implements Callable<Integer> {
 
 	@Option(names = "--input", description = "input", required = true)

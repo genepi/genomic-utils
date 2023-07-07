@@ -1,4 +1,4 @@
-package genepi.genomic.utils.commands;
+package genepi.genomic.utils.commands.liftover;
 
 import static org.junit.Assert.assertEquals;
 

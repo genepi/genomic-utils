@@ -1,4 +1,4 @@
-package genepi.genomic.utils.commands;
+package genepi.genomic.utils.commands.vcf;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 
-import genepi.genomic.utils.App;
 import genepi.io.text.LineWriter;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFFileReader;
@@ -16,7 +15,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 
-@Command(name = "vcf-quality-control", version = App.VERSION)
+@Command
 public class VcfQualityControlCommand implements Callable<Integer> {
 
 	@Parameters(description = "vcf files")

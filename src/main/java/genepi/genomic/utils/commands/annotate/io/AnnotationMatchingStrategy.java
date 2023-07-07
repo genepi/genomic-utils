@@ -1,4 +1,4 @@
-package genepi.genomic.utils.io;
+package genepi.genomic.utils.commands.annotate.io;
 
 public enum AnnotationMatchingStrategy {
 

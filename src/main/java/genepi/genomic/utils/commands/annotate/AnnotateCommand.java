@@ -1,19 +1,18 @@
-package genepi.genomic.utils.commands;
+package genepi.genomic.utils.commands.annotate;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import genepi.genomic.utils.App;
-import genepi.genomic.utils.io.AnnotationFileReader;
-import genepi.genomic.utils.io.AnnotationMatchingStrategy;
+import genepi.genomic.utils.commands.annotate.io.AnnotationFileReader;
+import genepi.genomic.utils.commands.annotate.io.AnnotationMatchingStrategy;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.writer.CsvTableWriter;
-import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Visibility;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "annotate", version = App.VERSION)
+@Command
 public class AnnotateCommand implements Callable<Integer> {
 
 	@Option(names = { "--input" }, description = "Input filename", required = true)

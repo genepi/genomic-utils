@@ -1,4 +1,4 @@
-package genepi.genomic.utils.commands;
+package genepi.genomic.utils.commands.annotate;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import genepi.genomic.utils.io.AnnotationMatchingStrategy;
+import genepi.genomic.utils.commands.annotate.io.AnnotationMatchingStrategy;
 
 public class AnnotateCommandTest {
 

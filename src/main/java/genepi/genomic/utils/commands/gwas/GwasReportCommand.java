@@ -1,4 +1,4 @@
-package genepi.genomic.utils.commands;
+package genepi.genomic.utils.commands.gwas;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 
-import genepi.genomic.utils.App;
 import genepi.genomic.utils.commands.gwas.binner.Binner;
 import genepi.genomic.utils.commands.gwas.binner.Variant;
 import genepi.genomic.utils.commands.gwas.report.IndexReport;
@@ -23,12 +22,12 @@ import genepi.genomic.utils.commands.gwas.util.PValFormat;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.reader.ITableReader;
 import lukfor.reports.util.FileUtil;
-import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Visibility;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "gwas-report", version = App.VERSION)
+@Command
 public class GwasReportCommand implements Callable<Integer> {
 
 	@Parameters(description = "Set files")
@@ -109,9 +108,10 @@ public class GwasReportCommand implements Callable<Integer> {
 			"--peak-variant-Counting-pval-threshold" }, description = "peak-variant-Counting-pval-threshold", required = false, showDefaultValue = Visibility.ALWAYS)
 	private double peakVariantCountingPvalThreshold = Binner.DEFAULT_PEAK_VARIANT_COUNTING_PVAL_THRESHOLD;
 
-	@Option(names = { "--index" }, description = "Create index html file. Possible values: ${COMPLETION-CANDIDATES}", required = false)
+	@Option(names = {
+			"--index" }, description = "Create index html file. Possible values: ${COMPLETION-CANDIDATES}", required = false)
 	private IndexCreationMode index = IndexCreationMode.AUTO;
-	
+
 	public void setFiles(List<File> files) {
 		this.files = files;
 	}
@@ -203,7 +203,7 @@ public class GwasReportCommand implements Callable<Integer> {
 	public void setIndex(IndexCreationMode index) {
 		this.index = index;
 	}
-	
+
 	@Override
 	public Integer call() throws Exception {
 

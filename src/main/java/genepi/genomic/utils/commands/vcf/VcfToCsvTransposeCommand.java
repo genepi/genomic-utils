@@ -1,11 +1,12 @@
-package genepi.genomic.utils.commands;
+package genepi.genomic.utils.commands.vcf;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 
-import genepi.genomic.utils.App;
 import genepi.io.table.writer.CsvTableWriter;
 import genepi.io.table.writer.ExcelTableWriter;
 import genepi.io.table.writer.ITableWriter;
@@ -14,8 +15,8 @@ import htsjdk.variant.vcf.VCFFileReader;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "vcf-to-csv", version = App.VERSION)
-public class VcfToCsvCommand implements Callable<Integer> {
+@Command
+public class VcfToCsvTransposeCommand implements Callable<Integer> {
 
 	@Option(names = "--input", description = "input vcf file", required = true)
 	private String input;
@@ -51,14 +52,32 @@ public class VcfToCsvCommand implements Callable<Integer> {
 
 		List<String> samples = reader.getFileHeader().getGenotypeSamples();
 
+		Map<String, List<String>> samplesGenotypes = new HashMap<String, List<String>>();
+		for (String sample : samples) {
+			samplesGenotypes.put(sample, new Vector<String>());
+		}
+
+		List<String> snps = new Vector<String>();
+
+		for (VariantContext variant : reader) {
+			String snp = variant.getContig() + ":" + variant.getStart();
+			snps.add(snp);
+
+			for (String sample : samples) {
+				String value = "";
+				if (genotypes.equals("GT")) {
+					value = variant.getGenotype(sample).getGenotypeString();
+				} else if (genotypes.equals("DS")) {
+					value = variant.getGenotype(sample).getAttributeAsString("DS", "");
+				}
+				samplesGenotypes.get(sample).add(value);
+			}
+
+		}
+
 		List<String> columns = new Vector<String>();
-		columns.add("chr");
-		columns.add("pos");
-		columns.add("ref");
-		columns.add("alt");
-		columns.add("genotyped");
-		columns.add("r2");
-		columns.addAll(samples);
+		columns.add("sample");
+		columns.addAll(snps);
 
 		ITableWriter writer = null;
 
@@ -69,29 +88,11 @@ public class VcfToCsvCommand implements Callable<Integer> {
 		}
 
 		writer.setColumns(columns.toArray(new String[0]));
-
-		for (VariantContext variant : reader) {
-			writer.setString("chr", variant.getContig());
-			writer.setInteger("pos", variant.getStart());
-			writer.setString("ref", variant.getReference().getBaseString());
-			String alt = "";
-			for (int i = 0; i < variant.getAlternateAlleles().size(); i++) {
-				if (!alt.isEmpty()) {
-					alt += " ";
-				}
-				alt += variant.getAlternateAllele(i);
-			}
-			writer.setString("alt", alt);
-
-			writer.setString("genotyped", variant.getFilters().toString());
-			writer.setString("r2", variant.getAttributeAsString("R2", ""));
-
-			for (String sample : samples) {
-				if (genotypes.equals("GT")) {
-					writer.setString(sample, variant.getGenotype(sample).getGenotypeString());
-				} else if (genotypes.equals("DS")) {
-					writer.setString(sample, variant.getGenotype(sample).getAttributeAsString("DS", ""));
-				}
+		for (String sample : samples) {
+			writer.setString("sample", sample);
+			for (int i = 0; i < snps.size(); i++) {
+				String snp = snps.get(i);
+				writer.setString(snp, samplesGenotypes.get(sample).get(i));
 			}
 			writer.next();
 		}

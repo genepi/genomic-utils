@@ -1,19 +1,18 @@
 package genepi.genomic.utils;
 
-import java.util.concurrent.Callable;
-
-import genepi.genomic.utils.commands.AnnotateCommand;
-import genepi.genomic.utils.commands.CsvToBedCommand;
-import genepi.genomic.utils.commands.GwasReportCommand;
-import genepi.genomic.utils.commands.LiftoverCommand;
-import genepi.genomic.utils.commands.VcfQualityControlCommand;
-import genepi.genomic.utils.commands.VcfStatisticsCommand;
-import genepi.genomic.utils.commands.VcfToCsvCommand;
-import genepi.genomic.utils.commands.VcfToCsvTransposeCommand;
 import genepi.genomic.utils.commands.VersionCommand;
+import genepi.genomic.utils.commands.annotate.AnnotateCommand;
+import genepi.genomic.utils.commands.csv.CsvToBedCommand;
+import genepi.genomic.utils.commands.gwas.GwasReportCommand;
+import genepi.genomic.utils.commands.liftover.LiftoverCommand;
+import genepi.genomic.utils.commands.vcf.VcfQualityControlCommand;
+import genepi.genomic.utils.commands.vcf.VcfStatisticsCommand;
+import genepi.genomic.utils.commands.vcf.VcfToCsvCommand;
+import genepi.genomic.utils.commands.vcf.VcfToCsvTransposeCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+@Command(name = App.APP, version = App.VERSION)
 public class App {
 
 	public static final String APP = "genomic-utils";
@@ -40,21 +39,20 @@ public class App {
 
 		ARGS = args;
 
-		int exitCode = new CommandLine(new DefaultCommand()).execute(args);
-		System.exit(exitCode);
+		CommandLine commandLine = new CommandLine(new App());
+		commandLine.addSubcommand("annotate", new AnnotateCommand());
+		commandLine.addSubcommand("csv-to-bed", new CsvToBedCommand());
+		commandLine.addSubcommand("gwas-report", new GwasReportCommand());
+		commandLine.addSubcommand("liftover", new LiftoverCommand());
+		commandLine.addSubcommand("vcf-quality-control", new VcfQualityControlCommand());
+		commandLine.addSubcommand("vcf-statistics", new VcfStatisticsCommand());
+		commandLine.addSubcommand("vcf-to-csv", new VcfToCsvCommand());
+		commandLine.addSubcommand("vcf-to-csv-transpose", new VcfToCsvTransposeCommand());
+		commandLine.addSubcommand("version", new VersionCommand());
 
-	}
-
-	@Command(name = App.APP, version = App.VERSION, subcommands = { AnnotateCommand.class, LiftoverCommand.class,
-			GwasReportCommand.class, VcfStatisticsCommand.class, VcfQualityControlCommand.class, CsvToBedCommand.class,
-			VcfToCsvCommand.class, VcfToCsvTransposeCommand.class, VersionCommand.class })
-	public static class DefaultCommand implements Callable<Integer> {
-
-		@Override
-		public Integer call() throws Exception {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		commandLine.setExecutionStrategy(new CommandLine.RunLast());
+		int result = commandLine.execute(args);
+		System.exit(result);
 
 	}
 
