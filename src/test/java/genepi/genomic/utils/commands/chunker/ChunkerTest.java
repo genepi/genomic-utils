@@ -1,13 +1,14 @@
 package genepi.genomic.utils.commands.chunker;
 
 import genepi.genomic.utils.commands.chunker.vcf.VcfReader;
+import genepi.genomic.utils.commands.chunker.vcf.VcfWriter;
 import org.junit.Test;
 
 import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 
-public class ReaderTest {
+public class ChunkerTest {
 
     @Test
     public void testVcfReader() throws Exception {
@@ -18,6 +19,6 @@ public class ReaderTest {
         assertEquals(file, reader.getFile());
         assertEquals(true, reader.next());
         assertEquals(51, reader.getNumberOfSamples());
-        assertEquals(0, reader.getNumberOfVariants());
+        assertEquals(7823, reader.getNumberOfVariants());
     }
 }

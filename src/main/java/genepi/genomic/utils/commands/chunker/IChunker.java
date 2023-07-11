@@ -1,5 +1,7 @@
 package genepi.genomic.utils.commands.chunker;
 
+import genepi.genomic.utils.commands.chunker.chunkers.VcfChunker;
+
 import java.util.List;
 
 public interface IChunker {
@@ -8,5 +10,5 @@ public interface IChunker {
     public void setWriter(IVariantWriter writer); // null --> no chunks written
     public void setManifestWriter(IManifestWriter writer); // null --> no manifest
     public void executes();
-    public List<VcfChunk> getChunks();
+    public List<VcfChunker> getChunks();
 }

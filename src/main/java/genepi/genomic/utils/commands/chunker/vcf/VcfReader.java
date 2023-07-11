@@ -6,24 +6,26 @@ import genepi.genomic.utils.commands.chunker.Variant;
 import htsjdk.samtools.util.CloseableIterator;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VcfReader implements IVariantReader{
-    private String[] header;
+    private VCFHeader header;
     private Variant currentVariant;
     private VCFFileReader reader;
     private CloseableIterator<VariantContext> iterator;
     private File file;
+    private int numberVariants;
 
     public VcfReader(File file) {
         this.file = file;
         reader = new VCFFileReader(file, false);
         iterator = reader.iterator();
         // read header
-        header = new String[]{String.valueOf(reader.getFileHeader())};
+        header = reader.getFileHeader();
 
         // open vcf file
 
@@ -35,7 +37,18 @@ public class VcfReader implements IVariantReader{
     }
 
     @Override
-    public boolean next() {
+    public List<Variant> getAllVariants(){
+
+        List<Variant> allVariants = new ArrayList<>();
+
+        while (iterator.hasNext()) {
+            allVariants.add(createVariant());
+        }
+        this.numberVariants = allVariants.size();
+        return allVariants;
+    }
+
+    public Variant createVariant(){
         VariantContext vc = iterator.next();
 
         Object[] genotypesArray = vc.getGenotypes().toArray();
@@ -47,11 +60,18 @@ public class VcfReader implements IVariantReader{
             if(parts.length == 2) {
                 String id = parts[0];
                 String genotype = parts[1];
-                Genotype genotypeObject = new Genotype(id, genotype);
-                genotypeList.add(genotypeObject);
+//                Genotype genotypeObject = new Genotype(id, genotype);
+//                genotypeList.add(genotypeObject);
             }
         }
-        currentVariant = new Variant(vc.getContig(),vc.getStart(),genotypeList);
+//        Variant variant = new Variant(vc.getContig(),vc.getStart(),vc.getID(),vc.getReference(),vc.getAlt,genotypeList);
+//        return variant;
+        return null;
+    }
+
+    @Override
+    public boolean next() {
+        currentVariant = this.createVariant();
         return iterator.hasNext();
     }
 
@@ -67,7 +87,7 @@ public class VcfReader implements IVariantReader{
 
     @Override
     public int getNumberOfVariants() {
-        return 0; //muss noch gemacht werden falls nötig
+        return this.numberVariants;
     }
 
     @Override

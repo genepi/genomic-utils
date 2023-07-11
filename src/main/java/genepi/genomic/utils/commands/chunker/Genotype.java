@@ -1,25 +1,30 @@
 package genepi.genomic.utils.commands.chunker;
 
+import java.util.Map;
+
 public class Genotype {
 
     private String id;
-    private String genotype;
+    private Map<String, Object> attributes;
 
-    public Genotype(String id, String genotype) {
+    public Genotype(String id, Map<String, Object> attributes) {
         this.id = id;
-        this.genotype = genotype;
+        this.attributes = attributes;
     }
 
     public String getId() {
         return id;
     }
 
-    public String getGenotype() {
-        return genotype;
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 
     @Override
     public String toString() {
-        return "[" + id + " " + genotype + "]";
+        return "Genotype{" +
+                "id='" + id + '\'' +
+                ", attributes=" + attributes +
+                '}';
     }
 }
