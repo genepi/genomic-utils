@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 public class VcfChunkerTest {
 
-    File file = new File("/home/marvin/IdeaProjects/genomic-utils/test-data/data.vcf");
+    File file = new File("/test-data/data.vcf");
     VcfReader reader = new VcfReader(file);
 
     @Test
@@ -21,7 +21,7 @@ public class VcfChunkerTest {
         reader.next();
 
         assertEquals(51, reader.getNumberOfAllSamples());
-        assertEquals(1, reader.getNumberOfAllVariants());
+        assertEquals(1, reader.getNumberOfCurrentVariants());
     }
 
     @Test

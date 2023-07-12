@@ -69,7 +69,7 @@ public class VcfReader implements IVariantReader{
             currentVariant = new Variant(vc.getContig(), vc.getStart(), vc.getID(), vc.getReference().toString(), alt, String.valueOf(vc.getPhredScaledQual()), String.valueOf(vc.getFilters()), vc.getAttributes(), format, genotypeList);
             System.out.println(currentVariant);
             this.numberVariants++;
-            this.numberCurrentSamples++;
+            this.numberCurrentVariants++;
             return true;
         } else {
             return false;
@@ -79,10 +79,6 @@ public class VcfReader implements IVariantReader{
     @Override
     public File getFile() {
         return this.file;
-    }
-
-    public int getNumberOfCurrentSamples(){
-        return this.numberCurrentSamples;
     }
 
     @Override
