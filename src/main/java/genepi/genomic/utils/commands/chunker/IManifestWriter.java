@@ -2,6 +2,7 @@ package genepi.genomic.utils.commands.chunker;
 
 import genepi.genomic.utils.commands.chunker.chunkers.VcfChunker;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface IManifestWriter {

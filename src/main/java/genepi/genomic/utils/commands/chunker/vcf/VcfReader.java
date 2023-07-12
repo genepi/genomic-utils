@@ -4,6 +4,8 @@ import genepi.genomic.utils.commands.chunker.Genotype;
 import genepi.genomic.utils.commands.chunker.IVariantReader;
 import genepi.genomic.utils.commands.chunker.Variant;
 import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.variant.variantcontext.Allele;
+import htsjdk.variant.variantcontext.GenotypesContext;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFFileReader;
 import htsjdk.variant.vcf.VCFHeader;
@@ -19,6 +21,8 @@ public class VcfReader implements IVariantReader{
     private CloseableIterator<VariantContext> iterator;
     private File file;
     private int numberVariants;
+    private int numberCurrentSamples;
+    private int numberCurrentVariants;
 
     public VcfReader(File file) {
         this.file = file;
@@ -37,42 +41,39 @@ public class VcfReader implements IVariantReader{
     }
 
     @Override
-    public List<Variant> getAllVariants(){
-
-        List<Variant> allVariants = new ArrayList<>();
-
-        while (iterator.hasNext()) {
-            allVariants.add(createVariant());
-        }
-        this.numberVariants = allVariants.size();
-        return allVariants;
-    }
-
-    public Variant createVariant(){
-        VariantContext vc = iterator.next();
-
-        Object[] genotypesArray = vc.getGenotypes().toArray();
-        List<Genotype> genotypeList = new ArrayList<>();
-
-        for(Object object : genotypesArray) {
-            String objectString = object.toString();
-            String[] parts = objectString.substring(1, objectString.length() -1 ).split("\\s"); //Trennt den String in 2 Teile (id und genotype) und entfernt die eckigen Klammern + das Leerzeichen
-            if(parts.length == 2) {
-                String id = parts[0];
-                String genotype = parts[1];
-//                Genotype genotypeObject = new Genotype(id, genotype);
-//                genotypeList.add(genotypeObject);
-            }
-        }
-//        Variant variant = new Variant(vc.getContig(),vc.getStart(),vc.getID(),vc.getReference(),vc.getAlt,genotypeList);
-//        return variant;
-        return null;
-    }
-
-    @Override
     public boolean next() {
-        currentVariant = this.createVariant();
-        return iterator.hasNext();
+
+        if (iterator.hasNext()) {
+
+            VariantContext vc = iterator.next();
+
+            GenotypesContext genotypeContext = vc.getGenotypes();
+            List<Genotype> genotypeList = new ArrayList<>();
+            List<String> format = new ArrayList<>();
+
+            int i = 0;
+
+            while (i < genotypeContext.size()) {
+                Genotype genotype = new Genotype( genotypeContext.get(i).getSampleName(), genotypeContext.get(i).getExtendedAttributes(), genotypeContext.get(i).getDP());
+                genotypeList.add(genotype);
+                format.addAll(genotypeContext.get(i).getExtendedAttributes().keySet());
+                i++;
+
+            }
+
+            List<String> alt = new ArrayList<>();
+            for (Allele allele : vc.getAlternateAlleles()) {
+                alt.add(allele.getBaseString());
+            }
+
+            currentVariant = new Variant(vc.getContig(), vc.getStart(), vc.getID(), vc.getReference().toString(), alt, String.valueOf(vc.getPhredScaledQual()), String.valueOf(vc.getFilters()), vc.getAttributes(), format, genotypeList);
+            System.out.println(currentVariant);
+            this.numberVariants++;
+            this.numberCurrentSamples++;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -80,14 +81,22 @@ public class VcfReader implements IVariantReader{
         return this.file;
     }
 
+    public int getNumberOfCurrentSamples(){
+        return this.numberCurrentSamples;
+    }
+
     @Override
-    public int getNumberOfSamples() {
+    public int getNumberOfAllSamples() {
         return reader.getFileHeader().getNGenotypeSamples();
     }
 
     @Override
-    public int getNumberOfVariants() {
+    public int getNumberOfAllVariants() {
         return this.numberVariants;
+    }
+
+    public int getNumberOfCurrentVariants() {
+        return this.numberCurrentVariants;
     }
 
     @Override

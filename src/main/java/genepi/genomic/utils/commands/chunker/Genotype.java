@@ -5,26 +5,33 @@ import java.util.Map;
 public class Genotype {
 
     private String id;
-    private Map<String, Object> attributes;
+    private Map<String, Object> extendedAttributes;
+    private int depth;
 
-    public Genotype(String id, Map<String, Object> attributes) {
+    public Genotype(String id, Map<String, Object> attributes, int depth) {
         this.id = id;
-        this.attributes = attributes;
+        this.extendedAttributes = attributes;
+        this.depth = depth;
     }
 
     public String getId() {
         return id;
     }
 
-    public Map<String, Object> getAttributes() {
-        return attributes;
+    public Map<String, Object> getExtendedAttributes() {
+        return extendedAttributes;
+    }
+
+    public int getDepth() {
+        return depth;
     }
 
     @Override
     public String toString() {
         return "Genotype{" +
                 "id='" + id + '\'' +
-                ", attributes=" + attributes +
+                ", attributes=" + extendedAttributes +
+                ", depth=" + depth +
                 '}';
     }
 }
