@@ -5,17 +5,23 @@ import java.util.Map;
 public class Genotype {
 
     private String id;
+    private String genotype;
     private Map<String, Object> extendedAttributes;
     private int depth;
 
-    public Genotype(String id, Map<String, Object> attributes, int depth) {
+    public Genotype(String id, String genotype, Map<String, Object> extendedAttributes, int depth) {
         this.id = id;
-        this.extendedAttributes = attributes;
+        this.genotype = genotype;
+        this.extendedAttributes = extendedAttributes;
         this.depth = depth;
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getGenotype() {
+        return genotype;
     }
 
     public Map<String, Object> getExtendedAttributes() {
@@ -30,7 +36,8 @@ public class Genotype {
     public String toString() {
         return "Genotype{" +
                 "id='" + id + '\'' +
-                ", attributes=" + extendedAttributes +
+                ", genotype='" + genotype + '\'' +
+                ", extendedAttributes=" + extendedAttributes +
                 ", depth=" + depth +
                 '}';
     }

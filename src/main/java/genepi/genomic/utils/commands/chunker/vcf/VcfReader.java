@@ -4,6 +4,7 @@ import genepi.genomic.utils.commands.chunker.Genotype;
 import genepi.genomic.utils.commands.chunker.IVariantReader;
 import genepi.genomic.utils.commands.chunker.Variant;
 import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.tribble.TribbleException;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.GenotypesContext;
 import htsjdk.variant.variantcontext.VariantContext;
@@ -21,17 +22,18 @@ public class VcfReader implements IVariantReader{
     private CloseableIterator<VariantContext> iterator;
     private File file;
     private int numberVariants;
-    private int numberCurrentSamples;
     private int numberCurrentVariants;
 
     public VcfReader(File file) {
         this.file = file;
-        reader = new VCFFileReader(file, false);
-        iterator = reader.iterator();
-        // read header
-        header = reader.getFileHeader();
-
-        // open vcf file
+        try {
+            reader = new VCFFileReader(file, false);
+            iterator = reader.iterator();
+            // read header
+            header = reader.getFileHeader();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -53,8 +55,8 @@ public class VcfReader implements IVariantReader{
 
             int i = 0;
 
-            while (i < genotypeContext.size()) {
-                Genotype genotype = new Genotype( genotypeContext.get(i).getSampleName(), genotypeContext.get(i).getExtendedAttributes(), genotypeContext.get(i).getDP());
+            for (htsjdk.variant.variantcontext.Genotype g : vc.getGenotypes()) {
+                Genotype genotype = new Genotype( g.getSampleName(), g.getGenotypeString(),g.getExtendedAttributes(), g.getDP());
                 genotypeList.add(genotype);
                 format.addAll(genotypeContext.get(i).getExtendedAttributes().keySet());
                 i++;
@@ -67,7 +69,6 @@ public class VcfReader implements IVariantReader{
             }
 
             currentVariant = new Variant(vc.getContig(), vc.getStart(), vc.getID(), vc.getReference().toString(), alt, String.valueOf(vc.getPhredScaledQual()), String.valueOf(vc.getFilters()), vc.getAttributes(), format, genotypeList);
-            System.out.println(currentVariant);
             this.numberVariants++;
             this.numberCurrentVariants++;
             return true;
