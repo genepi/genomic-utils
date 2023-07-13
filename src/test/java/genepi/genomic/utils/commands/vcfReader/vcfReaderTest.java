@@ -1,12 +1,13 @@
 package genepi.genomic.utils.commands.vcfReader;
 
-import genepi.genomic.utils.commands.chunker.Genotype;
 import genepi.genomic.utils.commands.chunker.vcf.VcfReader;
+import htsjdk.tribble.TribbleException;
 import org.junit.Test;
 
 import java.io.File;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class vcfReaderTest {
 
@@ -16,17 +17,19 @@ public class vcfReaderTest {
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
+        int runs = 0;
         while (reader.next()) {
-            reader.next();
+            runs++;
         }
 
         assertEquals(51, reader.getNumberOfAllSamples());
         assertEquals(7824, reader.getNumberOfCurrentVariants());
         assertEquals(7824, reader.getNumberOfAllVariants());
+        assertEquals(7824, runs);
     }
 
     @Test
-    public void test3rdChromAndPosOutput(){
+    public void test3rdChromAndPosOutput() {
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -38,15 +41,15 @@ public class vcfReaderTest {
     }
 
     @Test
-    public void testNullWithoutNextCall(){
+    public void testNullWithoutNextCall() {
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
-        assertEquals(null, reader.getVariant());
+        assertNull(reader.getVariant());
     }
 
     @Test
-    public void testFormat(){
+    public void testFormat() {
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -56,7 +59,7 @@ public class vcfReaderTest {
     }
 
     @Test
-    public void testQual(){
+    public void testQual() {
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -66,7 +69,7 @@ public class vcfReaderTest {
     }
 
     @Test
-    public void testGenotype(){
+    public void testGenotype() {
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -75,5 +78,33 @@ public class vcfReaderTest {
         assertEquals("C|C", reader.getVariant().getGenotypes().get(0).getGenotype());
     }
 
+    @Test (expected = TribbleException.class)
+    public void testInvalidFileException() {
+        File file = new File("test-data/dataInvalid.vcf");
+        VcfReader reader = new VcfReader(file);
+    }
 
+    @Test
+    public void testExtendedVariables(){
+        File file = new File("test-data/data.vcf");
+        VcfReader reader = new VcfReader(file);
+
+        reader.next();
+
+        assertEquals("{mz=no}", reader.getVariant().getGenotypes().get(0).getExtendedAttributes().toString());
+    }
+
+    @Test
+    public void testVcfGzFile(){
+        File file = new File ("test-data/data.vcf.gz");
+        VcfReader reader = new VcfReader(file);
+
+        reader.next();
+    }
+
+    @Test (expected = TribbleException.class)
+    public void testFileNotExistingException(){
+        File file = new File("test-data/Marvin.vcf");
+        VcfReader reader = new VcfReader(file);
+    }
 }

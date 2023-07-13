@@ -7,15 +7,12 @@ public class Variant {
     private String chromosome;
     private long position;
     private String id;
-    private String ref; // vc.getReference().getBaseString()
-    private List<String> alt;   //for (Allele allele : vc.getAlternateAlleles()) {
-                                //allele.getBaseString();
-                                //}
-
-    private String qual; //vc.getPhredScaledQual()
-    private String filter; //	Set<String> filters = vc.getFilters();
-    private Map<String, Object> info; //vc.getAttributes()
-    private List<String> format; //a.getExtendedAttributes() aus genotypecontext, same for all samples //first sample would be: vc.getGenotypes().get(0).getExtendedAttributes()
+    private String ref;
+    private List<String> alt;
+    private String qual;
+    private String filter;
+    private Map<String, Object> info;
+    private List<String> format;
     private List<Genotype> genotypes;
 
     public Variant(String chromosome, long position, String id, String ref, List<String> alt, String qual, String filter, Map<String, Object> info, List<String> format, List<Genotype> genotypes) {

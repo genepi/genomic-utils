@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VcfReader implements IVariantReader{
+public class VcfReader implements IVariantReader {
     private VCFHeader header;
     private Variant currentVariant;
     private VCFFileReader reader;
@@ -24,16 +24,11 @@ public class VcfReader implements IVariantReader{
     private int numberVariants;
     private int numberCurrentVariants;
 
-    public VcfReader(File file) {
-        this.file = file;
-        try {
+    public VcfReader(File file) throws TribbleException{
+            this.file = file;
             reader = new VCFFileReader(file, false);
             iterator = reader.iterator();
-            // read header
-            header = reader.getFileHeader();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            this.header = reader.getFileHeader();
 
     }
 
@@ -56,7 +51,7 @@ public class VcfReader implements IVariantReader{
             int i = 0;
 
             for (htsjdk.variant.variantcontext.Genotype g : vc.getGenotypes()) {
-                Genotype genotype = new Genotype( g.getSampleName(), g.getGenotypeString(),g.getExtendedAttributes(), g.getDP());
+                Genotype genotype = new Genotype(g.getSampleName(), g.getGenotypeString(), g.getExtendedAttributes(), g.getDP());
                 genotypeList.add(genotype);
                 format.addAll(genotypeContext.get(i).getExtendedAttributes().keySet());
                 i++;
