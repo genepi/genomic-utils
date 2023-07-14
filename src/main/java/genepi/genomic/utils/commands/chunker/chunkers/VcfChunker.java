@@ -11,7 +11,7 @@ public class VcfChunker implements IChunker {
     private File file;
     private IVariantReader reader;
     private IVariantWriter writer;
-    private IManifestWriter manifestWriter;
+    private IManifestWriter mWriter;
 
     @Override
     public void setReader(IVariantReader reader) {
@@ -24,8 +24,8 @@ public class VcfChunker implements IChunker {
     }
 
     @Override
-    public void setManifestWriter(IManifestWriter writer) {
-        this.manifestWriter = writer;
+    public void setmWriter(IManifestWriter writer) {
+        this.mWriter = writer;
     }
 
     @Override
@@ -33,11 +33,44 @@ public class VcfChunker implements IChunker {
 
     }
 
-    public void chunkByRegion(){
+    public void chunkByRegion(int region, String filename) {
 
+        int start = 0;
+        int end = region;
+        int chunkNumber = 1;
+        int lines = 0;
+
+            List<Variant> variants = new ArrayList<>();
+            int chrom = 0, numberVariants = 0, numberSamples = 0;
+            String path = "";
+            while (reader.next()) {
+                Variant v = reader.getVariant();
+                if (v.getPosition() >= start && v.getPosition() <= end) {
+                    variants.add(v);
+                    chrom = Integer.parseInt(v.getChromosome());
+                    numberVariants = variants.size();
+                    numberSamples = reader.getNumberOfAllSamples();
+                    path = reader.getFile().toString();
+                } else {
+                    if(numberVariants != 0) {
+                        mWriter.write("test-data/" + filename + ".txt", chrom, start, end, path, numberVariants, numberSamples, chunkNumber);
+                    }
+                    variants.clear();
+                    variants.add(v); //ist hier, da, wenn die Grenze erreicht wird das else ausgelöst wird und eine Variante sonst verloren geht (gibt wahrscheinlich eine bessere Lösung)
+                    numberVariants = 0;
+                    start = end + 1;
+                    end = start - 1 + region;
+                    chunkNumber++;
+                }
+            }
+            // Verarbeitung und Schreiben der letzten Variante außerhalb der Schleife --> gleiches Thema wie beim variants.add(v) in der else letzte würde verloren gehen
+            if (!variants.isEmpty()) {
+                numberVariants = variants.size();
+                mWriter.write("test-data/Manifest.txt", chrom, start, end, path, numberVariants, numberSamples, chunkNumber);
+            }
     }
 
-    public void chunkByVariants(int limit){ //TODO: denkfehler es sollen nicht alle ausgegeben werden sondern nur der Start und Endwert (ID oder ähnliches)
+    public void chunkByVariants(int limit){
         int i = 0;
         List<Variant> variants = new ArrayList<>();
 
@@ -46,8 +79,10 @@ public class VcfChunker implements IChunker {
             variants.add(reader.getVariant());
             i++;
         }
-        this.setManifestWriter(new ManifestWriter(variants));
-        manifestWriter.write("/home/marvin/Desktop/Manifest.txt");
+    }
+
+    public int getLinesWritten(){
+        return mWriter.getLinesWritten();
     }
 
     @Override

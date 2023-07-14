@@ -104,7 +104,7 @@ public class vcfReaderTest {
 
     @Test (expected = TribbleException.class)
     public void testFileNotExistingException(){
-        File file = new File("test-data/Marvin.vcf");
+        File file = new File("test-data/dataNonExistingFile.vcf");
         VcfReader reader = new VcfReader(file);
     }
 }
