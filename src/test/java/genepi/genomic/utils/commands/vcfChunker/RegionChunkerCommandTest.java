@@ -11,7 +11,7 @@ public class RegionChunkerCommandTest {
         VcfChunkerCommand command = new VcfChunkerCommand();
 
         command.setInput("test-data/dataSmall.vcf");
-        command.setOutput("Manifest");
+        command.setOutput("Manifest.txt");
         command.setChunksize(100);
 
         assertEquals(null, command.call());
@@ -22,7 +22,7 @@ public class RegionChunkerCommandTest {
         VcfChunkerCommand command = new VcfChunkerCommand();
 
         command.setInput("test-data/data.vcf");
-        command.setOutput("Manifest");
+        command.setOutput("Manifest.txt");
         command.setChunksize(5000000);
 
         assertEquals(null, command.call());

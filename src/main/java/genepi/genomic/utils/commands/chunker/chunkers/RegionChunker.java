@@ -33,7 +33,6 @@ public class RegionChunker implements IChunker {
         int start = 0;
         int end = region;
         int chunkNumber = 1;
-        int lines = 0;
 
         List<Variant> variants = new ArrayList<>();
         VcfChunk chunk = null;
@@ -42,13 +41,6 @@ public class RegionChunker implements IChunker {
         int numberVariants = 0, numberSamples = 0;
         String path = "";
         while (reader.next()) {
-
-//            chunkNumber = start / region;
-//            if(start % region == 0){
-//                chunkNumber = chunkNumber - 1;
-//            } //TODO: ALLES fixen
-
-
             Variant v = reader.getVariant();
             if (v.getPosition() >= start && v.getPosition() <= end) {
                 variants.add(v);

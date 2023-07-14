@@ -16,7 +16,7 @@ public class RegionChunkerTest {
     public void testVcfChunkerByRegionSmallFile() {
         File file = new File("test-data/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
-        ManifestWriter manifestWriter = new ManifestWriter("Manifest");
+        ManifestWriter manifestWriter = new ManifestWriter("Manifest.txt");
         RegionChunker chunker = new RegionChunker();
         chunker.setReader(reader);
         chunker.setManifestWriter(manifestWriter);
@@ -30,7 +30,7 @@ public class RegionChunkerTest {
     public void testVcfChunkerByRegionVariantAtChunkLimit() {
         File file = new File("test-data/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
-        ManifestWriter mWriter = new ManifestWriter("Manifest");
+        ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
         RegionChunker chunker = new RegionChunker();
         chunker.setReader(reader);
         chunker.setManifestWriter(mWriter);
@@ -44,7 +44,7 @@ public class RegionChunkerTest {
     public void testVcfChunkerByRegionBigFile() {
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
-        ManifestWriter mWriter = new ManifestWriter("Manifest");
+        ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
         RegionChunker chunker = new RegionChunker();
         chunker.setReader(reader);
         chunker.setManifestWriter(mWriter);
@@ -58,7 +58,7 @@ public class RegionChunkerTest {
     public void testVcfChunkerByRegionEmptyChunk() {
         File file = new File("test-data/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
-        ManifestWriter mWriter = new ManifestWriter("Manifest");
+        ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
         RegionChunker chunker = new RegionChunker();
         chunker.setReader(reader);
         chunker.setManifestWriter(mWriter);
@@ -72,7 +72,7 @@ public class RegionChunkerTest {
     public void testVcfChunkerByRegionStringChromosome() {
         File file = new File("test-data/dataStringChromosome.vcf");
         VcfReader reader = new VcfReader(file);
-        ManifestWriter mWriter = new ManifestWriter("Manifest");
+        ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
         RegionChunker chunker = new RegionChunker();
         chunker.setReader(reader);
         chunker.setManifestWriter(mWriter);
@@ -86,7 +86,7 @@ public class RegionChunkerTest {
     public void testVcfChunkerByRegionEmptyVariant() {
         File file = new File("test-data/dataWithEmptyVariant.vcf");
         VcfReader reader = new VcfReader(file);
-        ManifestWriter mWriter = new ManifestWriter("Manifest");
+        ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
         RegionChunker chunker = new RegionChunker();
         chunker.setReader(reader);
         chunker.setManifestWriter(mWriter);
@@ -99,7 +99,7 @@ public class RegionChunkerTest {
     public void testVcfChunkerByRegionEmptyFile() {
         File file = new File("test-data/dataEmpty.vcf");
         VcfReader reader = new VcfReader(file);
-        ManifestWriter mWriter = new ManifestWriter("Manifest");
+        ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
         RegionChunker chunker = new RegionChunker();
         chunker.setReader(reader);
         chunker.setManifestWriter(mWriter);

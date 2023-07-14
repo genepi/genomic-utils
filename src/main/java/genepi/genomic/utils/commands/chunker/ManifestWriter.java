@@ -10,12 +10,11 @@ import java.util.List;
 public class ManifestWriter implements IManifestWriter {
 
     private String header, filename;
-    int calls = 0;
     int linesWritten = 0;
     List<VcfChunk> chunks = new ArrayList<>();
 
     public ManifestWriter(String filename) {
-        this.filename = filename + ".txt";
+        this.filename = filename;
         this.setHeader();
     }
 
@@ -38,6 +37,7 @@ public class ManifestWriter implements IManifestWriter {
                 lineWriter.write(line);
                 this.linesWritten++;
             }
+            lineWriter.close();
         } catch (IOException e) {
             System.out.println("An error occured.");
             e.printStackTrace();
