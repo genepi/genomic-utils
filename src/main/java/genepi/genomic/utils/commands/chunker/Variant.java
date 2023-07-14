@@ -16,16 +16,16 @@ public class Variant {
     private List<Genotype> genotypes;
 
     public Variant(String chromosome, long position, String id, String ref, List<String> alt, String qual, String filter, Map<String, Object> info, List<String> format, List<Genotype> genotypes) {
-        this.chromosome = chromosome;
-        this.position = position;
-        this.id = id;
-        this.ref = ref;
-        this.alt = alt;
-        this.qual = qual;
-        this.filter = filter;
-        this.info = info;
-        this.format = format;
-        this.genotypes = genotypes;
+        this.setChromosome(chromosome);
+        this.setPosition(position);
+        this.setId(id);
+        this.setRef(ref);
+        this.setAlt(alt);
+        this.setQual(qual);
+        this.setFilter(filter);
+        this.setInfo(info);
+        this.setFormat(format);
+        this.setGenotypes(genotypes);
     }
 
     public String getChromosome() {
@@ -66,6 +66,46 @@ public class Variant {
 
     public List<Genotype> getGenotypes() {
         return genotypes;
+    }
+
+    public void setChromosome(String chromosome) {
+        this.chromosome = chromosome;
+    }
+
+    public void setPosition(long position) {
+        this.position = position;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    public void setAlt(List<String> alt) {
+        this.alt = alt;
+    }
+
+    public void setQual(String qual) {
+        this.qual = qual;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public void setInfo(Map<String, Object> info) {
+        this.info = info;
+    }
+
+    public void setFormat(List<String> format) {
+        this.format = format;
+    }
+
+    public void setGenotypes(List<Genotype> genotypes) {
+        this.genotypes = genotypes;
     }
 
     @Override

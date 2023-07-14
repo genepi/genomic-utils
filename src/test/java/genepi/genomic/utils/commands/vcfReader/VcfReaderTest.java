@@ -9,7 +9,7 @@ import java.io.File;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class vcfReaderTest {
+public class VcfReaderTest {
 
     @Test
     public void testCompleteFile() {
@@ -37,7 +37,8 @@ public class vcfReaderTest {
         reader.next();
         reader.next();
 
-        assertEquals("20 74347", reader.getVariant().getChromosome() + " " + reader.getVariant().getPosition());
+        assertEquals("20", reader.getVariant().getChromosome());
+        assertEquals(74347, reader.getVariant().getPosition());
     }
 
     @Test
