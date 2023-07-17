@@ -12,6 +12,7 @@ public class RegionChunker implements IChunker {
     private IVariantReader reader;
     private IVariantWriter writer;
     private IManifestWriter manifestWriter;
+    private List<VcfChunk> chunks;
 
     @Override
     public void setReader(IVariantReader reader) {
@@ -32,43 +33,59 @@ public class RegionChunker implements IChunker {
     public void executes(int region) {
         int start = 0;
         int end = region;
-        int chunkNumber = 1;
-
-        List<Variant> variants = new ArrayList<>();
-        VcfChunk chunk = null;
+        int chunkNumber = 0;
+        VcfChunk chunk;
         List<VcfChunk> chunks = new ArrayList<>();
         String chrom = "";
-        int numberVariants = 0, numberSamples = 0;
-        String path = "";
+        int numberVariants = 0, numberSamples = reader.getNumberOfAllSamples();
+        String path = reader.getFile().toString();
+
         while (reader.next()) {
             Variant v = reader.getVariant();
-            if (v.getPosition() >= start && v.getPosition() <= end) {
-                variants.add(v);
-                chrom = v.getChromosome();
-                numberVariants = variants.size();
+
+            if (v.getPosition() > end) {
+                // Nur Chunks mit Varianten hinzufügen
+                if (numberVariants > 0) {
+                    chunk = new VcfChunk(chunkNumber, chrom, start, end, numberSamples, new File(path));
+                    chunk.setVariants(numberVariants);
+                    chunks.add(chunk);
+                    chunkNumber++;
+                }
+
+                // Überprüfen, ob die Variante zum nächsten Chunk gehört
+                while (v.getPosition() > end) {
+                    start = end + 1;
+                    end = start + region - 1;
+                }
+
+                // Chunk-relevante Informationen zurücksetzen
+                numberVariants = 0;
+                chrom = "";
                 numberSamples = reader.getNumberOfAllSamples();
                 path = reader.getFile().toString();
-                chunk = new VcfChunk(chunkNumber, chrom, start, end, numberVariants, numberSamples, new File(path));
-            } else {
-                if (numberVariants != 0) {
-                    chunks.add(chunk);
+            }
+
+            // Überprüfen, ob die Variante innerhalb des aktuellen Bereichs liegt
+            if (v.getPosition() >= start && v.getPosition() <= end) {
+                // Variante zur aktuellen Chunk-Zählung hinzufügen
+                numberVariants++;
+                if (chrom.isEmpty()) {
+                    chrom = v.getChromosome();
                 }
-                variants.clear();
-                variants.add(v); //ist hier, da, wenn die Grenze erreicht wird das else ausgelöst wird und eine Variante sonst verloren geht (gibt wahrscheinlich eine bessere Lösung)
-                numberVariants = variants.size();
-                start = end + 1;
-                end = start - 1 + region;
-                chunkNumber++;
-                chunk = new VcfChunk(chunkNumber, chrom, start, end, numberVariants, numberSamples, new File(path));
             }
         }
-        // Verarbeitung und Schreiben der letzten Variante außerhalb der Schleife --> gleiches Thema wie beim variants.add(v) in der else letzte würde verloren gehen
-        if (!variants.isEmpty()) {
+
+        // Letzten Chunk erstellen und zur Liste hinzufügen, wenn Varianten vorhanden
+        if (numberVariants > 0) {
+            chunk = new VcfChunk(chunkNumber, chrom, start, end, numberSamples, new File(path));
+            chunk.setVariants(numberVariants);
             chunks.add(chunk);
         }
+
         manifestWriter.setVcfChunks(chunks);
         manifestWriter.write();
     }
+
 
     public int getLinesWritten() {
         int lines = manifestWriter.getLinesWritten();
@@ -77,7 +94,7 @@ public class RegionChunker implements IChunker {
     }
 
     @Override
-    public List<RegionChunker> getChunks() {
-        return null;
+    public List<VcfChunk> getChunks() {
+        return this.chunks;
     }
 }

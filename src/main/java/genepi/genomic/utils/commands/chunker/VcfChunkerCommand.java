@@ -38,7 +38,7 @@ public class VcfChunkerCommand implements Callable<Integer> {
         RegionChunker chunker = new RegionChunker();
 
         chunker.setReader(new VcfReader(new File(input)));
-        chunker.setManifestWriter(new ManifestWriter("Manifest"));
+        chunker.setManifestWriter(new ManifestWriter(output));
 
         chunker.executes(chunksize);
 

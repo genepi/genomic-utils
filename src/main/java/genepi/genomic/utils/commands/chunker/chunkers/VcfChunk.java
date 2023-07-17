@@ -11,12 +11,11 @@ public class VcfChunk {
     private int samples;
     private File file;
 
-    public VcfChunk(int chunkNumber, String chrom, int start, int end, int variants, int samples, File file) {
+    public VcfChunk(int chunkNumber, String chrom, int start, int end, int samples, File file) {
         this.chunkNumber = chunkNumber;
         this.chrom = chrom;
         this.start = start;
         this.end = end;
-        this.variants = variants;
         this.samples = samples;
         this.file = file;
     }
@@ -39,6 +38,10 @@ public class VcfChunk {
 
     public int getVariants() {
         return variants;
+    }
+
+    public void setVariants(int variants) {
+        this.variants = variants;
     }
 
     public int getSamples() {

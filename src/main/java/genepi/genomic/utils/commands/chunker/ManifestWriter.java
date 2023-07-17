@@ -29,7 +29,6 @@ public class ManifestWriter implements IManifestWriter {
             LineWriter lineWriter = new LineWriter(this.filename);
 
             lineWriter.write(getHeader());
-            this.linesWritten++;
 
             for (VcfChunk chunk : chunks) {
                 String line = chunk.getChunkNumber() + "\t" + chunk.getChrom() + "\t" + chunk.getStart() + "\t" + chunk.getEnd() +

@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 public class RegionChunkerTest {
 
     @Test
-    public void testVcfChunkerByRegionSmallFile() {
+    public void testVcfRegionChunkerSmallFile() {
         File file = new File("test-data/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter manifestWriter = new ManifestWriter("Manifest.txt");
@@ -22,12 +22,26 @@ public class RegionChunkerTest {
         chunker.setManifestWriter(manifestWriter);
         chunker.executes(100);
 
-        assertEquals(5, chunker.getLinesWritten());
+        assertEquals(6, chunker.getLinesWritten());
         reader.close();
     }
 
     @Test
-    public void testVcfChunkerByRegionVariantAtChunkLimit() {
+    public void testVcfRegionChunkerOnlyChunk4(){
+        File file = new File("test-data/dataOnlyChunk4.vcf");
+        VcfReader reader = new VcfReader(file);
+        ManifestWriter manifestWriter = new ManifestWriter("Manifest.txt");
+        RegionChunker chunker = new RegionChunker();
+        chunker.setReader(reader);
+        chunker.setManifestWriter(manifestWriter);
+        chunker.executes(100);
+
+        assertEquals(1, chunker.getLinesWritten());
+        reader.close();
+    }
+
+    @Test
+    public void testVcfRegionChunkerVariantAtChunkLimit() {
         File file = new File("test-data/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
@@ -36,12 +50,12 @@ public class RegionChunkerTest {
         chunker.setManifestWriter(mWriter);
         chunker.executes(100);
 
-        assertEquals(5, chunker.getLinesWritten());
+        assertEquals(6, chunker.getLinesWritten());
         reader.close();
     }
 
     @Test
-    public void testVcfChunkerByRegionBigFile() {
+    public void testVcfRegionChunkerBigFile() {
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
@@ -50,12 +64,12 @@ public class RegionChunkerTest {
         chunker.setManifestWriter(mWriter);
         chunker.executes(5000000);
 
-        assertEquals(14, chunker.getLinesWritten());
+        assertEquals(13, chunker.getLinesWritten());
         reader.close();
     }
 
     @Test
-    public void testVcfChunkerByRegionEmptyChunk() {
+    public void testVcfRegionChunkerEmptyChunk() {
         File file = new File("test-data/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
@@ -64,12 +78,12 @@ public class RegionChunkerTest {
         chunker.setManifestWriter(mWriter);
         chunker.executes(100);
 
-        assertEquals(5, chunker.getLinesWritten());
+        assertEquals(6, chunker.getLinesWritten());
         reader.close();
     }
 
     @Test
-    public void testVcfChunkerByRegionStringChromosome() {
+    public void testVcfRegionChunkerStringChromosome() {
         File file = new File("test-data/dataStringChromosome.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
@@ -78,12 +92,12 @@ public class RegionChunkerTest {
         chunker.setManifestWriter(mWriter);
         chunker.executes(100);
 
-        assertEquals(4, chunker.getLinesWritten());
+        assertEquals(3, chunker.getLinesWritten());
         reader.close();
     }
 
     @Test(expected = TribbleException.class)
-    public void testVcfChunkerByRegionEmptyVariant() {
+    public void testVcfRegionChunkerEmptyVariant() {
         File file = new File("test-data/dataWithEmptyVariant.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
@@ -96,7 +110,7 @@ public class RegionChunkerTest {
     }
 
     @Test(expected = TribbleException.class)
-    public void testVcfChunkerByRegionEmptyFile() {
+    public void testVcfRegionChunkerEmptyFile() {
         File file = new File("test-data/dataEmpty.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter mWriter = new ManifestWriter("Manifest.txt");
