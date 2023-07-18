@@ -1,10 +1,10 @@
 package genepi.genomic.utils.commands.vcfReader;
 
 import genepi.genomic.utils.commands.chunker.vcf.VcfReader;
-import htsjdk.tribble.TribbleException;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNull;
 public class VcfReaderTest {
 
     @Test
-    public void testCompleteFile() {
+    public void testCompleteFile() throws Exception{
 
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
@@ -29,7 +29,7 @@ public class VcfReaderTest {
     }
 
     @Test
-    public void test3rdChromAndPosOutput() {
+    public void test3rdChromAndPosOutput() throws Exception{
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -42,7 +42,7 @@ public class VcfReaderTest {
     }
 
     @Test
-    public void testNullWithoutNextCall() {
+    public void testNullWithoutNextCall() throws Exception{
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -50,7 +50,7 @@ public class VcfReaderTest {
     }
 
     @Test
-    public void testFormat() {
+    public void testFormat() throws Exception{
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -60,7 +60,7 @@ public class VcfReaderTest {
     }
 
     @Test
-    public void testQual() {
+    public void testQual() throws Exception{
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -70,7 +70,7 @@ public class VcfReaderTest {
     }
 
     @Test
-    public void testGenotype() {
+    public void testGenotype() throws Exception{
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -79,14 +79,14 @@ public class VcfReaderTest {
         assertEquals("C|C", reader.getVariant().getGenotypes().get(0).getGenotype());
     }
 
-    @Test (expected = TribbleException.class)
-    public void testInvalidFileException() {
+    @Test (expected = IOException.class)
+    public void testInvalidFileException() throws Exception{
         File file = new File("test-data/dataInvalid.vcf");
         VcfReader reader = new VcfReader(file);
     }
 
     @Test
-    public void testExtendedVariables(){
+    public void testExtendedVariables() throws Exception{
         File file = new File("test-data/data.vcf");
         VcfReader reader = new VcfReader(file);
 
@@ -96,15 +96,15 @@ public class VcfReaderTest {
     }
 
     @Test
-    public void testVcfGzFile(){
+    public void testVcfGzFile() throws Exception{
         File file = new File ("test-data/data.vcf.gz");
         VcfReader reader = new VcfReader(file);
 
         reader.next();
     }
 
-    @Test (expected = TribbleException.class)
-    public void testFileNotExistingException(){
+    @Test (expected = IOException.class)
+    public void testFileNotExistingException() throws Exception{
         File file = new File("test-data/dataNonExistingFile.vcf");
         VcfReader reader = new VcfReader(file);
     }

@@ -12,6 +12,7 @@ import htsjdk.variant.vcf.VCFFileReader;
 import htsjdk.variant.vcf.VCFHeader;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +25,15 @@ public class VcfReader implements IVariantReader {
     private int numberVariants;
     private int numberCurrentVariants;
 
-    public VcfReader(File file) throws TribbleException{
+    public VcfReader(File file) throws IOException {
+        try {
             this.file = file;
             reader = new VCFFileReader(file, false);
             iterator = reader.iterator();
             this.header = reader.getFileHeader();
+        } catch (TribbleException e){
+            throw new IOException(e.getMessage());
+        }
 
     }
 

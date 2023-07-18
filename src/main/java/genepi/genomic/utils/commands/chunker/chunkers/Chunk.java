@@ -2,7 +2,7 @@ package genepi.genomic.utils.commands.chunker.chunkers;
 
 import java.io.File;
 
-public class VcfChunk {
+public class Chunk {
     private int chunkNumber;
     private String chrom;
     private int start;
@@ -11,7 +11,7 @@ public class VcfChunk {
     private int samples;
     private File file;
 
-    public VcfChunk(int chunkNumber, String chrom, int start, int end, int samples, File file) {
+    public Chunk(int chunkNumber, String chrom, int start, int end, int samples, File file) {
         this.chunkNumber = chunkNumber;
         this.chrom = chrom;
         this.start = start;
