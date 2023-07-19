@@ -2,7 +2,6 @@ package genepi.genomic.utils.commands.chunker;
 
 import genepi.genomic.utils.commands.chunker.chunkers.Chunk;
 import genepi.io.text.LineWriter;
-import jxl.common.Assert;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,11 +17,6 @@ public class ManifestWriter implements IManifestWriter {
     public ManifestWriter(String filename) {
         this.filename = filename;
         this.setHeader();
-        try {
-            lineWriter = new LineWriter(this.filename);
-        } catch (IOException e) {
-            System.out.println("An error occured:" + e.getMessage());
-        }
     }
 
     @Override
@@ -33,6 +27,7 @@ public class ManifestWriter implements IManifestWriter {
     @Override
     public void write(){
             try {
+                lineWriter = new LineWriter(this.filename);
                 lineWriter.write(getHeader());
 
                 for (Chunk chunk : chunks) {

@@ -3,8 +3,8 @@ package genepi.genomic.utils.commands.chunker;
 import genepi.genomic.utils.commands.chunker.chunkers.RegionChunker;
 import genepi.genomic.utils.commands.chunker.chunkers.VariantChunker;
 import genepi.genomic.utils.commands.chunker.vcf.VcfReader;
+import picocli.CommandLine;
 import picocli.CommandLine.Option;
-
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -20,11 +20,11 @@ public class VcfChunkerCommand implements Callable<Integer> {
     @Option(names = "--chunksize", description = "chunksize", required = true)
     private int chunksize;
 
-    @Option(names ="--chunk-by-size", description = "chunker type", required = true)
-    private boolean chunkBySize = false;
+    @Option(names ="--strategy", description = "chunker strategies:  ${COMPLETION-CANDIDATES}", required = false)
+    private ChunkingStrategy strategy = ChunkingStrategy.CHUNK_BY_REGION;
 
-    @Option(names ="--chunk-by-variant", description = "chunker type", required = true)
-    private boolean chunkByVariant = false;
+    private int numberChunks;
+
 
     public void setInput(List<String> input) {
         this.input = input;
@@ -38,8 +38,16 @@ public class VcfChunkerCommand implements Callable<Integer> {
         this.output = output;
     }
 
-    public void setChunkBySize(boolean chunkBySize) {
-        this.chunkBySize = chunkBySize;
+    public void setStrategy(ChunkingStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public int getNumberChunks(){
+        return this.numberChunks;
+    }
+
+    public void setNumberChunks(int numberChunks) {
+        this.numberChunks = numberChunks;
     }
 
     @Override
@@ -50,23 +58,25 @@ public class VcfChunkerCommand implements Callable<Integer> {
 
         IChunker chunker = null;
 
-        if(chunkBySize) {
+        if(strategy.equals(ChunkingStrategy.CHUNK_BY_REGION)) {
             chunker = new RegionChunker();
-        } else if(chunkByVariant) {
+        } else if(strategy.equals(ChunkingStrategy.CHUNK_BY_VARIANTS)) {
             chunker = new VariantChunker();
-        } else {
-            //TODO: throw exception if none is selected --> otherwise chunker is null
         }
-
-        int lines = 0;
 
         for (String input : input){
             chunker.setSize(chunksize);
             chunker.setReader(new VcfReader(new File(input)));
             chunker.executes();
-            lines += chunker.getChunks().size();
         }
+        setNumberChunks(chunker.getNumberChunks());
         chunker.setManifestWriter(new ManifestWriter(output));
-        return chunker.getChunks().size();
+        chunker.getManifestWriter().setVcfChunks(chunker.getChunks()); //Is not sure if write call will come here and in this form
+        chunker.getManifestWriter().write();
+        return 0;
+    }
+    public static void main(String... args) {
+        int exitCode = new CommandLine(new VcfChunkerCommand()).execute(args);
+        System.exit(exitCode);
     }
 }

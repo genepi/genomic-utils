@@ -6,14 +6,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionChunker implements IChunker {
+public class VariantChunker implements IChunker {
 
     private IVariantReader reader;
     private IVariantWriter writer;
     private IManifestWriter manifestWriter;
     private List<Chunk> chunks = new ArrayList<>();
     private int size;
-    int chunkNumber = 0;
 
     @Override
     public void setReader(IVariantReader reader) {
@@ -37,11 +36,11 @@ public class RegionChunker implements IChunker {
 
     @Override
     public void executes() {
-        this.chunkNumber++;
-        int start = 0;
-        int end = getSize();
+        int chunkNumber = 0;
         Chunk chunk;
         String chrom = "";
+        int start = 0;
+        int end = getSize();
         int numberVariants = 0, numberSamples = reader.getNumberOfAllSamples();
         String path = reader.getFile().toString();
 
@@ -60,35 +59,28 @@ public class RegionChunker implements IChunker {
                 end = getSize();
                 chrom = v.getChromosome();
             }
-            if (v.getPosition() > end ) {
-                // Only add chunks with variants
-                if (numberVariants > 0) {
-                    chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples, new File(path));
-                    chunk.setVariants(numberVariants);
-                    this.addChunks(chunk);
-                    chunkNumber++;
-                }
 
-                // Get start and end from next chunk
-                while (v.getPosition() > end) {
-                    start = end + 1;
-                    end = start + size - 1;
-                }
+            // Check if the current chunk has reached the maximum number of variants
+            if (numberVariants >= getSize()) {
+                chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples, new File(path));
+                chunk.setVariants(numberVariants);
+                addChunks(chunk);
+                chunkNumber++;
 
                 // Reset chunk-related information
                 numberVariants = 0;
                 chrom = "";
                 numberSamples = reader.getNumberOfAllSamples();
                 path = reader.getFile().toString();
+
+                start = end + 1;
+                end = start + getSize();
             }
 
-            // Check if the variant is within the current range
-            if (v.getPosition() >= start && v.getPosition() <= end) {
-                // Add variant to current chunk count
-                numberVariants++;
-                if (chrom.isEmpty()) {
-                    chrom = v.getChromosome();
-                }
+            // Add variant to current chunk count
+            numberVariants++;
+            if (chrom.isEmpty()) {
+                chrom = v.getChromosome();
             }
         }
 
@@ -96,7 +88,7 @@ public class RegionChunker implements IChunker {
         if (numberVariants > 0) {
             chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples, new File(path));
             chunk.setVariants(numberVariants);
-            this.addChunks(chunk);
+            addChunks(chunk);
         }
     }
 
@@ -106,7 +98,7 @@ public class RegionChunker implements IChunker {
     }
 
     public int getSize() {
-        return size;
+        return this.size;
     }
 
     @Override
@@ -115,12 +107,12 @@ public class RegionChunker implements IChunker {
     }
 
     @Override
-    public int getNumberChunks(){
-        return this.chunks.size();
+    public int getNumberChunks() {
+        return chunks.size();
     }
 
     @Override
-    public void addChunks(Chunk chunk){
+    public void addChunks(Chunk chunk) {
         this.chunks.add(chunk);
     }
 }
