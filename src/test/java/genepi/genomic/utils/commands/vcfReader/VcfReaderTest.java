@@ -14,7 +14,7 @@ public class VcfReaderTest {
     @Test
     public void testCompleteFile() throws Exception{
 
-        File file = new File("test-data/data.vcf");
+        File file = new File("test-data/chunker/data.vcf");
         VcfReader reader = new VcfReader(file);
 
         int runs = 0;
@@ -30,7 +30,7 @@ public class VcfReaderTest {
 
     @Test
     public void test3rdChromAndPosOutput() throws Exception{
-        File file = new File("test-data/data.vcf");
+        File file = new File("test-data/chunker/data.vcf");
         VcfReader reader = new VcfReader(file);
 
         reader.next();
@@ -43,7 +43,7 @@ public class VcfReaderTest {
 
     @Test
     public void testNullWithoutNextCall() throws Exception{
-        File file = new File("test-data/data.vcf");
+        File file = new File("test-data/chunker/data.vcf");
         VcfReader reader = new VcfReader(file);
 
         assertNull(reader.getVariant());
@@ -51,7 +51,7 @@ public class VcfReaderTest {
 
     @Test
     public void testFormat() throws Exception{
-        File file = new File("test-data/data.vcf");
+        File file = new File("test-data/chunker/data.vcf");
         VcfReader reader = new VcfReader(file);
 
         reader.next();
@@ -61,7 +61,7 @@ public class VcfReaderTest {
 
     @Test
     public void testQual() throws Exception{
-        File file = new File("test-data/data.vcf");
+        File file = new File("test-data/chunker/data.vcf");
         VcfReader reader = new VcfReader(file);
 
         reader.next();
@@ -71,7 +71,7 @@ public class VcfReaderTest {
 
     @Test
     public void testGenotype() throws Exception{
-        File file = new File("test-data/data.vcf");
+        File file = new File("test-data/chunker/data.vcf");
         VcfReader reader = new VcfReader(file);
 
         reader.next();
@@ -81,13 +81,13 @@ public class VcfReaderTest {
 
     @Test (expected = IOException.class)
     public void testInvalidFileException() throws Exception{
-        File file = new File("test-data/dataInvalid.vcf");
+        File file = new File("test-data/chunker/dataInvalid.vcf");
         VcfReader reader = new VcfReader(file);
     }
 
     @Test
     public void testExtendedVariables() throws Exception{
-        File file = new File("test-data/data.vcf");
+        File file = new File("test-data/chunker/data.vcf");
         VcfReader reader = new VcfReader(file);
 
         reader.next();
@@ -97,7 +97,7 @@ public class VcfReaderTest {
 
     @Test
     public void testVcfGzFile() throws Exception{
-        File file = new File ("test-data/data.vcf.gz");
+        File file = new File ("test-data/chunker/data.vcf.gz");
         VcfReader reader = new VcfReader(file);
 
         reader.next();
@@ -105,7 +105,7 @@ public class VcfReaderTest {
 
     @Test (expected = IOException.class)
     public void testFileNotExistingException() throws Exception{
-        File file = new File("test-data/dataNonExistingFile.vcf");
+        File file = new File("test-data/chunker/dataNonExistingFile.vcf");
         VcfReader reader = new VcfReader(file);
     }
 }
