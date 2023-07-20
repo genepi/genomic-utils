@@ -50,7 +50,7 @@ public class App {
 		commandLine.addSubcommand("vcf-to-csv", new VcfToCsvCommand());
 		commandLine.addSubcommand("vcf-to-csv-transpose", new VcfToCsvTransposeCommand());
 		commandLine.addSubcommand("version", new VersionCommand());
-		commandLine.addSubcommand("file chunking", new VcfChunkerCommand());
+		commandLine.addSubcommand("file-chunking", new VcfChunkerCommand());
 
 		commandLine.setExecutionStrategy(new CommandLine.RunLast());
 		int result = commandLine.execute(args);

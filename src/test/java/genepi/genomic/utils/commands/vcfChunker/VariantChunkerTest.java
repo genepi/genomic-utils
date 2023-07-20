@@ -2,6 +2,7 @@ package genepi.genomic.utils.commands.vcfChunker;
 
 import genepi.genomic.utils.commands.chunker.IChunker;
 import genepi.genomic.utils.commands.chunker.ManifestWriter;
+import genepi.genomic.utils.commands.chunker.chunkers.RegionChunker;
 import genepi.genomic.utils.commands.chunker.chunkers.VariantChunker;
 import genepi.genomic.utils.commands.chunker.vcf.VcfReader;
 import org.junit.Test;
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class VariantChunkerTest {
 
     @Test
-    public void testVcfRegionChunkerSmallFile() throws Exception {
+    public void testVcfVariantChunkerSmallFile() throws Exception {
         File file = new File("test-data/chunker/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new VariantChunker();
@@ -27,7 +28,7 @@ public class VariantChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerSmallFileWriter() throws Exception {
+    public void testVcfVariantChunkerSmallFileWriter() throws Exception {
         File file = new File("test-data/chunker/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter manifestWriter = new ManifestWriter("Manifest.txt");
@@ -45,7 +46,7 @@ public class VariantChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerOnlyChunk4() throws Exception{
+    public void testVcfVariantChunkerOnlyChunk4() throws Exception{
         File file = new File("test-data/chunker/dataOnlyChunk4.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter manifestWriter = new ManifestWriter("Manifest.txt");
@@ -62,7 +63,7 @@ public class VariantChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerVariantAtChunkLimit() throws Exception{
+    public void testVcfVariantChunkerVariantAtChunkLimit() throws Exception{
         File file = new File("test-data/chunker/dataAllLimits.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new VariantChunker();
@@ -75,20 +76,20 @@ public class VariantChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerBigFile() throws Exception{
+    public void testVcfVariantChunkerBigFile() throws Exception{
         File file = new File("test-data/chunker/data.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new VariantChunker();
         chunker.setReader(reader);
-        chunker.setSize(3);
+        chunker.setSize(500);
         chunker.executes();
 
-        assertEquals(2608, chunker.getNumberChunks());
+        assertEquals(16, chunker.getNumberChunks());
         reader.close();
     }
 
     @Test
-    public void testVcfRegionChunkerEmptyChunk() throws Exception{
+    public void testVcfVariantChunkerEmptyChunk() throws Exception{
         File file = new File("test-data/chunker/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new VariantChunker();
@@ -101,8 +102,8 @@ public class VariantChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerStringChromosomeWriter() throws Exception{
-        File file = new File("test-data/chunker/dataStringChromosome.vcf");
+    public void testVcfVariantChunkerStringChromosomeWriter() throws Exception{
+        File file = new File("test-data/chunker/dataStringChromosomes.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter manifestWriter = new ManifestWriter("Manifest.txt");
         IChunker chunker = new VariantChunker();
@@ -119,7 +120,7 @@ public class VariantChunkerTest {
     }
 
     @Test(expected = IOException.class)
-    public void testVcfRegionChunkerEmptyVariant() throws Exception {
+    public void testVcfVariantChunkerEmptyVariant() throws Exception {
         File file = new File("test-data/chunker/dataWithEmptyVariant.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new VariantChunker();
@@ -130,7 +131,7 @@ public class VariantChunkerTest {
     }
 
     @Test(expected = IOException.class)
-    public void testVcfRegionChunkerEmptyFile() throws Exception {
+    public void testVcfVariantChunkerEmptyFile() throws Exception {
         File file = new File("test-data/chunker/dataEmpty.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new VariantChunker();
@@ -141,7 +142,7 @@ public class VariantChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerGZFile() throws Exception {
+    public void testVcfVariantChunkerGZFile() throws Exception {
         File file = new File("test-data/chunker/data.vcf.gz");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new VariantChunker();
@@ -154,7 +155,7 @@ public class VariantChunkerTest {
     }
 
     @Test
-    public void testVcfChunkerDifferentChromosomes() throws Exception {
+    public void testVcfVariantChunkerDifferentChromosomes() throws Exception {
         File file = new File("test-data/chunker/dataDifferentChromosomes.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new VariantChunker();
@@ -167,8 +168,8 @@ public class VariantChunkerTest {
     }
 
     @Test
-    public void testVcfChunkerDifferentStringChromosomes() throws Exception {
-        File file = new File("test-data/chunker/dataStringChromosome.vcf");
+    public void testVcfVariantChunkerDifferentStringChromosomes() throws Exception {
+        File file = new File("test-data/chunker/dataStringChromosomes.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new VariantChunker();
         chunker.setReader(reader);

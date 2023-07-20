@@ -13,6 +13,7 @@ public class VariantChunker implements IChunker {
     private IManifestWriter manifestWriter;
     private List<Chunk> chunks = new ArrayList<>();
     private int size;
+    int chunkNumber = 0;
 
     @Override
     public void setReader(IVariantReader reader) {
@@ -36,7 +37,7 @@ public class VariantChunker implements IChunker {
 
     @Override
     public void executes() {
-        int chunkNumber = 0;
+        this.chunkNumber++;
         Chunk chunk;
         String chrom = "";
         int start = 0;
@@ -74,7 +75,7 @@ public class VariantChunker implements IChunker {
                 path = reader.getFile().toString();
 
                 start = end + 1;
-                end = start + getSize();
+                end = start + getSize() - 1;
             }
 
             // Add variant to current chunk count

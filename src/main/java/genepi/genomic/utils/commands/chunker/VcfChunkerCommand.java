@@ -5,14 +5,15 @@ import genepi.genomic.utils.commands.chunker.chunkers.VariantChunker;
 import genepi.genomic.utils.commands.chunker.vcf.VcfReader;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 public class VcfChunkerCommand implements Callable<Integer> {
 
-    @Option(names = "--input", description = "input vcf file", required = true)
-    private List<String> input;
+    @Parameters(description = "Input files")
+    List<String> inputs;
 
     @Option(names = "--output", description = "output file", required = true)
     private String output;
@@ -26,8 +27,8 @@ public class VcfChunkerCommand implements Callable<Integer> {
     private int numberChunks;
 
 
-    public void setInput(List<String> input) {
-        this.input = input;
+    public void setInput(List<String> inputs) {
+        this.inputs = inputs;
     }
 
     public void setChunksize(int chunksize) {
@@ -52,19 +53,28 @@ public class VcfChunkerCommand implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        assert (input != null && input.size() > 0);
+
+        if (inputs == null || inputs.isEmpty()) {
+            System.out.println();
+            System.out.println("Please provide at least one input file.");
+            System.out.println();
+            return 1;
+        }
         assert (output != null);
         assert (chunksize > 0);
 
-        IChunker chunker = null;
+        IChunker chunker;
 
         if(strategy.equals(ChunkingStrategy.CHUNK_BY_REGION)) {
             chunker = new RegionChunker();
         } else if(strategy.equals(ChunkingStrategy.CHUNK_BY_VARIANTS)) {
             chunker = new VariantChunker();
+        } else {
+            System.out.println("Strategy not existing");
+            return 1;
         }
 
-        for (String input : input){
+        for (String input : inputs){
             chunker.setSize(chunksize);
             chunker.setReader(new VcfReader(new File(input)));
             chunker.executes();

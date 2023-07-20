@@ -102,7 +102,7 @@ public class RegionChunkerTest {
 
     @Test
     public void testVcfRegionChunkerStringChromosome() throws Exception{
-        File file = new File("test-data/chunker/dataStringChromosome.vcf");
+        File file = new File("test-data/chunker/dataStringChromosomes.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new RegionChunker();
         chunker.setReader(reader);
@@ -149,7 +149,7 @@ public class RegionChunkerTest {
     }
 
     @Test
-    public void testVcfChunkerDifferentChromosomes() throws Exception {
+    public void testVcfRegionChunkerDifferentChromosomes() throws Exception {
         File file = new File("test-data/chunker/dataDifferentChromosomes.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new RegionChunker();
@@ -162,8 +162,8 @@ public class RegionChunkerTest {
     }
 
     @Test
-    public void testVcfChunkerDifferentStringChromosomes() throws Exception {
-        File file = new File("test-data/chunker/dataStringChromosome.vcf");
+    public void testVcfRegionChunkerDifferentStringChromosomes() throws Exception {
+        File file = new File("test-data/chunker/dataStringChromosomes.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new RegionChunker();
         chunker.setReader(reader);
