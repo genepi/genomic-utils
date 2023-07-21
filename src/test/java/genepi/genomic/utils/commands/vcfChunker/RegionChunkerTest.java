@@ -28,11 +28,15 @@ public class RegionChunkerTest {
         manifestWriter.write();
 
         assertEquals(5, chunker.getNumberChunks());
+        assertEquals(3, chunker.getChunks().get(0).getVariants());
+        assertEquals(1, chunker.getChunks().get(1).getVariants());
+        assertEquals(2, chunker.getChunks().get(2).getVariants());
         reader.close();
     }
 
     @Test
     public void testVcfRegionChunkerSmallFile() throws Exception {
+
         File file = new File("test-data/chunker/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new RegionChunker();
@@ -40,7 +44,16 @@ public class RegionChunkerTest {
         chunker.setSize(100);
         chunker.executes();
 
+
         assertEquals(5, chunker.getNumberChunks());
+        assertEquals(3, chunker.getChunks().get(0).getVariants());
+        assertEquals(1, chunker.getChunks().get(1).getVariants());
+        assertEquals(2, chunker.getChunks().get(2).getVariants());
+        assertEquals(0, chunker.getChunks().get(0).getStart());
+        assertEquals(100, chunker.getChunks().get(0).getEnd());
+        assertEquals(101, chunker.getChunks().get(1).getStart());
+        assertEquals(200, chunker.getChunks().get(1).getEnd());
+
         reader.close();
     }
 
@@ -58,6 +71,9 @@ public class RegionChunkerTest {
         manifestWriter.write();
 
         assertEquals(1, chunker.getNumberChunks());
+        assertEquals(1, chunker.getChunks().get(0).getVariants());
+        assertEquals(301, chunker.getChunks().get(0).getStart());
+        assertEquals(400, chunker.getChunks().get(0).getEnd());
         reader.close();
     }
 
@@ -71,6 +87,11 @@ public class RegionChunkerTest {
         chunker.executes();
 
         assertEquals(5, chunker.getNumberChunks());
+        assertEquals(2, chunker.getChunks().get(0).getVariants());
+        assertEquals(2, chunker.getChunks().get(1).getVariants());
+        assertEquals(2, chunker.getChunks().get(2).getVariants());
+        assertEquals(101, chunker.getChunks().get(1).getStart());
+        assertEquals(200, chunker.getChunks().get(1).getEnd());
         reader.close();
     }
 
@@ -84,6 +105,11 @@ public class RegionChunkerTest {
         chunker.executes();
 
         assertEquals(13, chunker.getNumberChunks());
+        assertEquals(902, chunker.getChunks().get(0).getVariants());
+        assertEquals(766, chunker.getChunks().get(1).getVariants());
+        assertEquals(719, chunker.getChunks().get(2).getVariants());
+        assertEquals(5000001, chunker.getChunks().get(1).getStart());
+        assertEquals(10000000, chunker.getChunks().get(1).getEnd());
         reader.close();
     }
 
@@ -97,6 +123,11 @@ public class RegionChunkerTest {
         chunker.executes();
 
         assertEquals(5, chunker.getNumberChunks());
+        assertEquals(3, chunker.getChunks().get(0).getVariants());
+        assertEquals(1, chunker.getChunks().get(1).getVariants());
+        assertEquals(2, chunker.getChunks().get(2).getVariants());
+        assertEquals(101, chunker.getChunks().get(1).getStart());
+        assertEquals(200, chunker.getChunks().get(1).getEnd());
         reader.close();
     }
 
@@ -110,6 +141,11 @@ public class RegionChunkerTest {
         chunker.executes();
 
         assertEquals(5, chunker.getNumberChunks());
+        assertEquals(6, chunker.getChunks().get(0).getVariants());
+        assertEquals(2, chunker.getChunks().get(1).getVariants());
+        assertEquals(1, chunker.getChunks().get(2).getVariants());
+        assertEquals(101, chunker.getChunks().get(1).getStart());
+        assertEquals(200, chunker.getChunks().get(1).getEnd());
         reader.close();
     }
 
@@ -145,6 +181,11 @@ public class RegionChunkerTest {
         chunker.executes();
 
         assertEquals(13, chunker.getNumberChunks());
+        assertEquals(902, chunker.getChunks().get(0).getVariants());
+        assertEquals(766, chunker.getChunks().get(1).getVariants());
+        assertEquals(719, chunker.getChunks().get(2).getVariants());
+        assertEquals(5000001, chunker.getChunks().get(1).getStart());
+        assertEquals(10000000, chunker.getChunks().get(1).getEnd());
         reader.close();
     }
 
@@ -158,6 +199,11 @@ public class RegionChunkerTest {
         chunker.executes();
 
         assertEquals(8, chunker.getNumberChunks());
+        assertEquals(3, chunker.getChunks().get(0).getVariants());
+        assertEquals(1, chunker.getChunks().get(1).getVariants());
+        assertEquals(2, chunker.getChunks().get(2).getVariants());
+        assertEquals(101, chunker.getChunks().get(1).getStart());
+        assertEquals(200, chunker.getChunks().get(1).getEnd());
         reader.close();
     }
 
@@ -171,6 +217,11 @@ public class RegionChunkerTest {
         chunker.executes();
 
         assertEquals(5, chunker.getNumberChunks());
+        assertEquals(6, chunker.getChunks().get(0).getVariants());
+        assertEquals(2, chunker.getChunks().get(1).getVariants());
+        assertEquals(1, chunker.getChunks().get(2).getVariants());
+        assertEquals(101, chunker.getChunks().get(1).getStart());
+        assertEquals(200, chunker.getChunks().get(1).getEnd());
         reader.close();
     }
 

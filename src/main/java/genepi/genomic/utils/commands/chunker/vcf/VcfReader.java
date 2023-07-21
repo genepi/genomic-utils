@@ -68,7 +68,7 @@ public class VcfReader implements IVariantReader {
                 alt.add(allele.getBaseString());
             }
 
-            currentVariant = new Variant(vc.getContig(), vc.getStart(), vc.getID(), vc.getReference().toString(), alt, String.valueOf(vc.getPhredScaledQual()), String.valueOf(vc.getFilters()), vc.getAttributes(), format, genotypeList);
+            currentVariant = new Variant(vc.getContig(), vc.getStart(), vc.getID(), vc.getReference().getBaseString(), alt, String.valueOf(vc.getPhredScaledQual()), String.valueOf(vc.getFilters()), vc.getAttributes(), format, genotypeList);
             this.numberVariants++;
             this.numberCurrentVariants++;
             return true;
@@ -94,6 +94,11 @@ public class VcfReader implements IVariantReader {
 
     public int getNumberOfCurrentVariants() {
         return this.numberCurrentVariants;
+    }
+
+    @Override
+    public VCFHeader getHeader(){
+        return this.header;
     }
 
     @Override

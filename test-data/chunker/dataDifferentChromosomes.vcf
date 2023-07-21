@@ -1,5 +1,6 @@
 ##fileformat=VCFv4.2
 ##FORMAT=<ID=BD,Number=1,Type=Float,Description="Genotype dosage from beagle">
+##FORMAT=<ID=GT,Number=1,Type=Float,Description="Genotype">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	FB00000	FB00001	FB00002	FB00005
 20	1	rs6086616	T	C	100	PASS	.	GT:DP:mb	1|1:12:yes	1|1	1|1	0|1
 20	10	rs6039403	G	A	100	PASS	.	GT	1|0	0|0	1|0	1|0	0|0	1|1

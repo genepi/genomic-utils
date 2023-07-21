@@ -8,5 +8,6 @@ public interface IVariantReader {
     public File getFile();
     public int getNumberOfAllSamples();
     public int getNumberOfAllVariants();
+    public Object getHeader();
     public void close();
 }
