@@ -55,7 +55,7 @@ public class VcfWriter implements IVariantWriter {
                     .chr(variant.getChromosome())
                     .id(variant.getId());
 
-            if (variant.getFilter() == "") {
+            if (variant.getFilter().equals("")) {
                 vcBuilder.passFilters();
             } else {
                 vcBuilder.filter(variant.getFilter());
