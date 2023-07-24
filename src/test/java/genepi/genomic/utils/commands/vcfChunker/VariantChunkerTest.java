@@ -22,7 +22,7 @@ public class VariantChunkerTest {
         chunker.setSize(3);
         chunker.executes();
 
-        assertEquals(3, chunker.getNumberChunks());
+        assertEquals(3, chunker.getChunks().size());
         assertEquals(3, chunker.getChunks().get(0).getVariants());
         assertEquals(3, chunker.getChunks().get(1).getVariants());
         assertEquals(2, chunker.getChunks().get(2).getVariants());
@@ -36,14 +36,13 @@ public class VariantChunkerTest {
         ManifestWriter manifestWriter = new ManifestWriter("Manifest.txt");
         IChunker chunker = new VariantChunker();
         chunker.setReader(reader);
-        chunker.setManifestWriter(manifestWriter);
         chunker.setSize(3);
         chunker.executes();
 
         manifestWriter.setVcfChunks(chunker.getChunks());
         manifestWriter.write();
 
-        assertEquals(3, chunker.getNumberChunks());
+        assertEquals(3, chunker.getChunks().size());
         assertEquals(3, chunker.getChunks().get(0).getVariants());
         assertEquals(3, chunker.getChunks().get(1).getVariants());
         assertEquals(2, chunker.getChunks().get(2).getVariants());
@@ -63,7 +62,7 @@ public class VariantChunkerTest {
         manifestWriter.setVcfChunks(chunker.getChunks());
         manifestWriter.write();
 
-        assertEquals(1, chunker.getNumberChunks());
+        assertEquals(1, chunker.getChunks().size());
         assertEquals(1, chunker.getChunks().get(0).getVariants());
         assertEquals(0, chunker.getChunks().get(0).getStart());
         assertEquals(10, chunker.getChunks().get(0).getEnd());
@@ -79,7 +78,7 @@ public class VariantChunkerTest {
         chunker.setSize(4);
         chunker.executes();
 
-        assertEquals(3, chunker.getNumberChunks());
+        assertEquals(3, chunker.getChunks().size());
         assertEquals(4, chunker.getChunks().get(0).getVariants());
         assertEquals(4, chunker.getChunks().get(1).getVariants());
         assertEquals(2, chunker.getChunks().get(2).getVariants());
@@ -95,7 +94,7 @@ public class VariantChunkerTest {
         chunker.setSize(500);
         chunker.executes();
 
-        assertEquals(16, chunker.getNumberChunks());
+        assertEquals(16, chunker.getChunks().size());
         assertEquals(500, chunker.getChunks().get(0).getVariants());
         assertEquals(500, chunker.getChunks().get(1).getVariants());
         assertEquals(500, chunker.getChunks().get(2).getVariants());
@@ -113,7 +112,7 @@ public class VariantChunkerTest {
         chunker.setSize(2);
         chunker.executes();
 
-        assertEquals(4, chunker.getNumberChunks());
+        assertEquals(4, chunker.getChunks().size());
         assertEquals(2, chunker.getChunks().get(0).getVariants());
         assertEquals(2, chunker.getChunks().get(1).getVariants());
         assertEquals(2, chunker.getChunks().get(2).getVariants());
@@ -126,7 +125,6 @@ public class VariantChunkerTest {
         VcfReader reader = new VcfReader(file);
         ManifestWriter manifestWriter = new ManifestWriter("Manifest.txt");
         IChunker chunker = new VariantChunker();
-        chunker.setManifestWriter(manifestWriter);
         chunker.setReader(reader);
         chunker.setSize(2);
         chunker.executes();
@@ -134,7 +132,7 @@ public class VariantChunkerTest {
         manifestWriter.setVcfChunks(chunker.getChunks());
         manifestWriter.write();
 
-        assertEquals(7, chunker.getNumberChunks());
+        assertEquals(7, chunker.getChunks().size());
         assertEquals(2, chunker.getChunks().get(0).getVariants());
         assertEquals(2, chunker.getChunks().get(1).getVariants());
         assertEquals(2, chunker.getChunks().get(2).getVariants());
@@ -172,7 +170,7 @@ public class VariantChunkerTest {
         chunker.setSize(3);
         chunker.executes();
 
-        assertEquals(2608, chunker.getNumberChunks());
+        assertEquals(2608, chunker.getChunks().size());
         assertEquals(3, chunker.getChunks().get(0).getVariants());
         assertEquals(3, chunker.getChunks().get(1).getVariants());
         assertEquals(3, chunker.getChunks().get(2).getVariants());
@@ -188,7 +186,7 @@ public class VariantChunkerTest {
         chunker.setSize(3);
         chunker.executes();
 
-        assertEquals(6, chunker.getNumberChunks());
+        assertEquals(6, chunker.getChunks().size());
         assertEquals(3, chunker.getChunks().get(0).getVariants());
         assertEquals(3, chunker.getChunks().get(1).getVariants());
         assertEquals(2, chunker.getChunks().get(2).getVariants());
@@ -204,7 +202,7 @@ public class VariantChunkerTest {
         chunker.setSize(4);
         chunker.executes();
 
-        assertEquals(5, chunker.getNumberChunks());
+        assertEquals(5, chunker.getChunks().size());
         assertEquals(4, chunker.getChunks().get(0).getVariants());
         assertEquals(4, chunker.getChunks().get(1).getVariants());
         assertEquals(1, chunker.getChunks().get(2).getVariants());

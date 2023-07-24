@@ -53,7 +53,7 @@ public class Variant {
     }
 
     public String getFilter() {
-        return filter;
+        return filter.replace("[", "").replace("]", ""); //remove '[]'
     }
 
     public Map<String, Object> getInfo() {

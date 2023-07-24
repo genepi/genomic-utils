@@ -9,8 +9,6 @@ import java.util.List;
 public class VariantChunker implements IChunker {
 
     private IVariantReader reader;
-    private IVariantWriter writer;
-    private IManifestWriter manifestWriter;
     private List<Chunk> chunks = new ArrayList<>();
     private int size;
     int chunkNumber = 0;
@@ -20,20 +18,6 @@ public class VariantChunker implements IChunker {
         this.reader = reader;
     }
 
-    @Override
-    public void setWriter(IVariantWriter writer) {
-        this.writer = writer;
-    }
-
-    @Override
-    public void setManifestWriter(IManifestWriter writer) {
-        this.manifestWriter = writer;
-    }
-
-    @Override
-    public IManifestWriter getManifestWriter() {
-        return this.manifestWriter;
-    }
 
     @Override
     public void executes() {
@@ -107,13 +91,7 @@ public class VariantChunker implements IChunker {
         this.size = size;
     }
 
-    @Override
-    public int getNumberChunks() {
-        return chunks.size();
-    }
-
-    @Override
-    public void addChunks(Chunk chunk) {
+    protected void addChunks(Chunk chunk) {
         this.chunks.add(chunk);
     }
 }

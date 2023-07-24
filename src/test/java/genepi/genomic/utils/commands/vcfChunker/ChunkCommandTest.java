@@ -1,7 +1,7 @@
 package genepi.genomic.utils.commands.vcfChunker;
 
 import genepi.genomic.utils.commands.chunker.ChunkingStrategy;
-import genepi.genomic.utils.commands.chunker.VcfChunkerCommand;
+import genepi.genomic.utils.commands.chunker.ChunkCommand;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,11 +9,11 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class ChunkerCommandTest {
+public class ChunkCommandTest {
 
     @Test
     public void testVcfChunkerByRegionTwoInputFiles() throws Exception {
-        VcfChunkerCommand command = new VcfChunkerCommand();
+        ChunkCommand command = new ChunkCommand();
 
         List<String> input = new ArrayList<>();
 
@@ -30,7 +30,7 @@ public class ChunkerCommandTest {
 
     @Test
     public void testVcfChunkerByRegionSmallFile() throws Exception {
-        VcfChunkerCommand command = new VcfChunkerCommand();
+        ChunkCommand command = new ChunkCommand();
 
         List<String> input = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class ChunkerCommandTest {
 
     @Test
     public void testVcfChunkerByRegionBigFile() throws Exception {
-        VcfChunkerCommand command = new VcfChunkerCommand();
+        ChunkCommand command = new ChunkCommand();
 
         List<String> input = new ArrayList<>();
 
@@ -62,7 +62,7 @@ public class ChunkerCommandTest {
 
     @Test
     public void testVcfChunkerByRegionDifferentChromosomes() throws Exception {
-        VcfChunkerCommand command = new VcfChunkerCommand();
+        ChunkCommand command = new ChunkCommand();
 
         List<String> input = new ArrayList<>();
 
@@ -80,7 +80,7 @@ public class ChunkerCommandTest {
 
     @Test
     public void testVcfChunkerByVariantTwoInputFiles() throws Exception {
-        VcfChunkerCommand command = new VcfChunkerCommand();
+        ChunkCommand command = new ChunkCommand();
 
         List<String> input = new ArrayList<>();
 
@@ -98,7 +98,7 @@ public class ChunkerCommandTest {
 
     @Test
     public void testVcfChunkerByVariantDifferentChromosomes() throws Exception {
-        VcfChunkerCommand command = new VcfChunkerCommand();
+        ChunkCommand command = new ChunkCommand();
 
         List<String> input = new ArrayList<>();
 
@@ -117,7 +117,7 @@ public class ChunkerCommandTest {
 
     @Test
     public void testVcfChunkerByVariantManyFiles() throws Exception {
-        VcfChunkerCommand command = new VcfChunkerCommand();
+        ChunkCommand command = new ChunkCommand();
 
         List<String> input = new ArrayList<>();
 

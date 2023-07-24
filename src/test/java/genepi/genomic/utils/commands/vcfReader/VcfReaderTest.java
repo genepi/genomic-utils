@@ -56,7 +56,7 @@ public class VcfReaderTest {
 
         reader.next();
 
-        assertEquals("[mz]", reader.getVariant().getFormat().toString());
+        assertEquals("[mb]", reader.getVariant().getFormat().toString());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class VcfReaderTest {
 
         reader.next();
 
-        assertEquals("{mz=no}", reader.getVariant().getGenotypes().get(0).getExtendedAttributes().toString());
+        assertEquals("{mb=no}", reader.getVariant().getGenotypes().get(0).getExtendedAttributes().toString());
     }
 
     @Test

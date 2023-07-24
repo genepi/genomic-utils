@@ -1,10 +1,10 @@
 package genepi.genomic.utils.commands.chunker;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface IVariantWriter {
-    public void setVariant(Variant variant);
-    public void setNumberofSamples(int numberOfSamples);
+    public void setVariants(List<Variant> variants);
     public void write() throws IOException;
     public void close();
 }
