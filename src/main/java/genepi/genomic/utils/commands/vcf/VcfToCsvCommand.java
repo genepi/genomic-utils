@@ -40,6 +40,10 @@ public class VcfToCsvCommand implements Callable<Integer> {
 		this.output = output;
 	}
 
+	public void setGenotypes(String genotypes) {
+		this.genotypes = genotypes;
+	}
+	
 	@Override
 	public Integer call() throws Exception {
 
@@ -51,6 +55,7 @@ public class VcfToCsvCommand implements Callable<Integer> {
 		List<String> samples = reader.getFileHeader().getGenotypeSamples();
 
 		List<String> columns = new Vector<String>();
+		columns.add("id");
 		columns.add("chr");
 		columns.add("pos");
 		columns.add("ref");
@@ -70,6 +75,7 @@ public class VcfToCsvCommand implements Callable<Integer> {
 		writer.setColumns(columns.toArray(new String[0]));
 
 		for (VariantContext variant : reader) {
+			writer.setString("id", variant.getID());;
 			writer.setString("chr", variant.getContig());
 			writer.setInteger("pos", variant.getStart());
 			writer.setString("ref", variant.getReference().getBaseString());

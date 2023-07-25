@@ -30,6 +30,9 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 	@Option(names = "--genotypes", description = "genotypes: GT or DS", required = false)
 	private String genotypes = "GT";
 
+	@Option(names = "--name", description = "column name. id or pos. default: pos", required = false)
+	private String name = "pos";
+
 	public void setInput(String input) {
 		this.input = input;
 	}
@@ -40,6 +43,10 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 
 	public void setOutput(String output) {
 		this.output = output;
+	}
+
+	public void setGenotypes(String genotypes) {
+		this.genotypes = genotypes;
 	}
 
 	@Override
@@ -58,10 +65,17 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 		}
 
 		List<String> snps = new Vector<String>();
-
 		for (VariantContext variant : reader) {
-			String snp = variant.getContig() + ":" + variant.getStart();
+			String snp = null;
+			if (name.equalsIgnoreCase("id")) {
+				snp = variant.getID();
+			} else {
+				snp = variant.getContig() + ":" + variant.getStart() + "_" + variant.getReference() + "_"
+						+ variant.getAlternateAlleles();
+			}
+			if (!snps.contains(snp)) {
 			snps.add(snp);
+			
 
 			for (String sample : samples) {
 				String value = "";
@@ -69,8 +83,12 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 					value = variant.getGenotype(sample).getGenotypeString();
 				} else if (genotypes.equals("DS")) {
 					value = variant.getGenotype(sample).getAttributeAsString("DS", "");
+					if (value.isEmpty()) {
+						value = "" + variant.getGenotype(sample).countAllele(variant.getAlternateAllele(0));
+					}
 				}
 				samplesGenotypes.get(sample).add(value);
+			}
 			}
 
 		}
