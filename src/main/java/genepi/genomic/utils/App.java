@@ -2,6 +2,7 @@ package genepi.genomic.utils;
 
 import genepi.genomic.utils.commands.VersionCommand;
 import genepi.genomic.utils.commands.annotate.AnnotateCommand;
+import genepi.genomic.utils.commands.csv.CsvConcatCommand;
 import genepi.genomic.utils.commands.csv.CsvToBedCommand;
 import genepi.genomic.utils.commands.gwas.GwasReportCommand;
 import genepi.genomic.utils.commands.liftover.LiftoverCommand;
@@ -42,6 +43,7 @@ public class App {
 		CommandLine commandLine = new CommandLine(new App());
 		commandLine.addSubcommand("annotate", new AnnotateCommand());
 		commandLine.addSubcommand("csv-to-bed", new CsvToBedCommand());
+		commandLine.addSubcommand("csv-concat", new CsvConcatCommand());
 		commandLine.addSubcommand("gwas-report", new GwasReportCommand());
 		commandLine.addSubcommand("liftover", new LiftoverCommand());
 		commandLine.addSubcommand("vcf-quality-control", new VcfQualityControlCommand());
