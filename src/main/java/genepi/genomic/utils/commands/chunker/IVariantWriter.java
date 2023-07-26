@@ -12,4 +12,5 @@ public interface IVariantWriter {
     public void setFileOutputByChunk(Chunk chunk);
     public String getFileOutput();
     public void setCalls(int calls);
+    public void setFileOutputDefault(String outputDefault);
 }

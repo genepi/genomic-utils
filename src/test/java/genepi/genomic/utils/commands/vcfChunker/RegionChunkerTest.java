@@ -43,7 +43,6 @@ public class RegionChunkerTest {
         chunker.setSize(100);
         chunker.executes();
 
-
         assertEquals(5, chunker.getChunks().size());
         assertEquals(3, chunker.getChunks().get(0).getVariants());
         assertEquals(1, chunker.getChunks().get(1).getVariants());

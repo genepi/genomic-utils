@@ -4,6 +4,7 @@ import genepi.genomic.utils.commands.chunker.*;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class RegionChunker implements IChunker {
     }
 
     @Override
-    public void executes() {
+    public void executes() throws InvocationTargetException, InstantiationException, IllegalAccessException {
         this.chunkNumber++;
         int start = 0;
         int end = getSize();
@@ -34,6 +35,13 @@ public class RegionChunker implements IChunker {
         String chrom = "";
         int numberVariants = 0, numberSamples = reader.getNumberOfAllSamples();
         List<Variant> variantList = new ArrayList<>(); //List for writer to get all data from variants in chunk
+
+        IVariantWriter writer = null;
+
+        if (writerClass != null) {
+            Constructor[] constructor = writerClass.getConstructors();
+            writer = (IVariantWriter) constructor[0].newInstance(reader.getHeader());
+        }
 
         while (reader.next()) {
             Variant v = reader.getVariant();
@@ -51,8 +59,6 @@ public class RegionChunker implements IChunker {
                 chrom = v.getChromosome();
                 if(writerClass != null) {
                     try {
-                        Constructor[] constructor = writerClass.getConstructors();
-                        IVariantWriter writer = (IVariantWriter) constructor[0].newInstance(reader.getHeader());
                         writer.setFileOutputByChunk(chunk);
                         chunk.setFile(new File(writer.getFileOutput()));
                         for (Variant variant : variantList) {
@@ -78,8 +84,6 @@ public class RegionChunker implements IChunker {
                     chunkNumber++;
                     if(writerClass != null) {
                         try {
-                            Constructor[] constructor = writerClass.getConstructors();
-                            IVariantWriter writer = (IVariantWriter) constructor[0].newInstance(reader.getHeader());
                             writer.setFileOutputByChunk(chunk);
                             chunk.setFile(new File(writer.getFileOutput()));
                             for (Variant variant : variantList) {
@@ -115,6 +119,20 @@ public class RegionChunker implements IChunker {
                 numberVariants++;
                 if (writerClass != null){
                     variantList.add(v);
+                    if(variantList.size() >= 500){ //write current 500 variants already to avoid heapspace problem
+                        chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples);
+                        writer.setFileOutputByChunk(chunk);
+                        chunk.setFile(new File(writer.getFileOutput()));
+                        try {
+                            for (Variant variant : variantList) {
+                                writer.setVariant(variant);
+                                writer.write();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        variantList.clear();
+                    }
                 }
                 if (chrom.isEmpty()) {
                     chrom = v.getChromosome();
@@ -129,8 +147,6 @@ public class RegionChunker implements IChunker {
             this.addChunks(chunk);
             if(writerClass != null) {
                 try {
-                    Constructor[] constructor = writerClass.getConstructors();
-                    IVariantWriter writer = (IVariantWriter) constructor[0].newInstance(reader.getHeader());
                     writer.setFileOutputByChunk(chunk);
                     chunk.setFile(new File(writer.getFileOutput()));
                     for (Variant variant : variantList) {
