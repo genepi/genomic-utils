@@ -3,6 +3,7 @@ package genepi.genomic.utils.commands.chunker;
 import genepi.genomic.utils.commands.chunker.chunkers.RegionChunker;
 import genepi.genomic.utils.commands.chunker.chunkers.VariantChunker;
 import genepi.genomic.utils.commands.chunker.vcf.VcfReader;
+import genepi.genomic.utils.commands.chunker.vcf.VcfWriter;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -21,8 +22,14 @@ public class ChunkCommand implements Callable<Integer> {
     @Option(names = "--chunksize", description = "chunksize", required = true)
     private int chunksize;
 
-    @Option(names ="--strategy", description = "chunker strategies:  ${COMPLETION-CANDIDATES}", required = false)
+    @Option(names ="--strategy", description = "chunker strategies:  ${COMPLETION-CANDIDATES}")
     private ChunkingStrategy strategy = ChunkingStrategy.CHUNK_BY_REGION;
+
+    @Option(names = "--output-dir", description = "output directory")
+    private String outputDirectory = "";
+
+    @Option(names = "--output-format", description = "output formats: ${COMPLETION-CANDIDATES}")
+    private ChunkingOutput chunkingOutput = ChunkingOutput.VCF;
 
     private int numberChunks;
 
@@ -51,6 +58,10 @@ public class ChunkCommand implements Callable<Integer> {
         this.numberChunks = numberChunks;
     }
 
+    public void setOutputDirectory(String outputDirectory) {
+        this.outputDirectory = outputDirectory;
+    }
+
     @Override
     public Integer call() throws Exception {
 
@@ -62,25 +73,44 @@ public class ChunkCommand implements Callable<Integer> {
         }
         assert (output != null);
         assert (chunksize > 0);
+        assert (chunkingOutput != null);
 
         IChunker chunker;
 
-        if(strategy.equals(ChunkingStrategy.CHUNK_BY_REGION)) {
-            chunker = new RegionChunker();
-        } else if(strategy.equals(ChunkingStrategy.CHUNK_BY_VARIANTS)) {
-            chunker = new VariantChunker();
-        } else {
-            System.out.println("Strategy not existing");
-            return 1;
+        switch (strategy) {
+            case CHUNK_BY_REGION:
+                chunker = new RegionChunker();
+                break;
+            case CHUNK_BY_VARIANTS:
+                chunker = new VariantChunker();
+                break;
+            default:
+                System.out.println("Strategy not existing");
+                return 1;
         }
 
+        IManifestWriter manifestWriter;
+
+        if(!outputDirectory.equals("")){
+            VcfWriter.setOutputDir(outputDirectory);
+            chunker.setWriterClass(VcfWriter.class);
+            manifestWriter = new ManifestWriter(outputDirectory + "/"  + output);
+        } else {
+            manifestWriter = new ManifestWriter(output);
+        }
+
+        chunker.setSize(chunksize);
         for (String input : inputs){
-            chunker.setSize(chunksize);
-            chunker.setReader(new VcfReader(new File(input)));
-            chunker.executes();
+            try {
+                chunker.setReader(new VcfReader(new File(input)));
+                chunker.executes();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return 0;
+            }
         }
         setNumberChunks(chunker.getChunks().size());
-        IManifestWriter manifestWriter = new ManifestWriter(output);
+
         manifestWriter.setVcfChunks(chunker.getChunks());
         manifestWriter.write();
         return 0;

@@ -134,4 +134,76 @@ public class ChunkCommandTest {
         assertEquals(0, (int) (command.call()));
         assertEquals(22, command.getNumberChunks());
     }
+
+    @Test
+    public void testVcfChunkerByRegionSmallFileWithVCFWriter() throws Exception {
+        ChunkCommand command = new ChunkCommand();
+
+        List<String> input = new ArrayList<>();
+
+        input.add("test-data/chunker/dataSmall.vcf");
+
+        command.setInput(input);
+        command.setOutput("Manifest.txt");
+        command.setChunksize(100);
+        command.setOutputDirectory("test-data/chunker");
+
+        assertEquals(0, (int) (command.call()));
+        assertEquals(5, command.getNumberChunks());
+    }
+
+    @Test
+    public void testVcfChunkerByRegionTwoFilesWithVCFWriter() throws Exception {
+        ChunkCommand command = new ChunkCommand();
+
+        List<String> input = new ArrayList<>();
+
+        input.add("test-data/chunker/data.vcf");
+        input.add("test-data/chunker/dataSmall.vcf");
+
+        command.setInput(input);
+        command.setOutput("Manifest.txt");
+        command.setChunksize(50000000);
+        command.setOutputDirectory("test-data/chunker");
+
+        assertEquals(0, (int) (command.call()));
+        assertEquals(3, command.getNumberChunks());
+    }
+
+    @Test
+    public void testVcfChunkerByVariantSmallFileWithVCFWriter() throws Exception {
+        ChunkCommand command = new ChunkCommand();
+
+        List<String> input = new ArrayList<>();
+
+        input.add("test-data/chunker/dataSmall.vcf");
+
+        command.setInput(input);
+        command.setOutput("Manifest.txt");
+        command.setChunksize(3);
+        command.setOutputDirectory("test-data/chunker");
+        command.setStrategy(ChunkingStrategy.CHUNK_BY_VARIANTS);
+
+        assertEquals(0, (int) (command.call()));
+        assertEquals(3, command.getNumberChunks());
+    }
+
+    @Test
+    public void testVcfChunkerByVariantTwoFilesWithVCFWriter() throws Exception {
+        ChunkCommand command = new ChunkCommand();
+
+        List<String> input = new ArrayList<>();
+
+        input.add("test-data/chunker/data.vcf");
+        input.add("test-data/chunker/dataSmall.vcf");
+
+        command.setInput(input);
+        command.setOutput("Manifest.txt");
+        command.setChunksize(50000000);
+        command.setOutputDirectory("test-data/chunker");
+        command.setStrategy(ChunkingStrategy.CHUNK_BY_VARIANTS);
+
+        assertEquals(0, (int) (command.call()));
+        assertEquals(2, command.getNumberChunks());
+    }
 }

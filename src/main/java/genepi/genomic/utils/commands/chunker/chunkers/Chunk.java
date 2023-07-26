@@ -11,13 +11,12 @@ public class Chunk {
     private int samples;
     private File file;
 
-    public Chunk(int chunkNumber, String chrom, int start, int end, int samples, File file) {
+    public Chunk(int chunkNumber, String chrom, int start, int end, int samples) {
         this.chunkNumber = chunkNumber;
         this.chrom = chrom;
         this.start = start;
         this.end = end;
         this.samples = samples;
-        this.file = file;
     }
 
     public int getChunkNumber() {
@@ -50,5 +49,9 @@ public class Chunk {
 
     public File getFile() {
         return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }
