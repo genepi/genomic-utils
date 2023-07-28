@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BgenIndexFileReader {
+public class BgenIndexFileReader implements IVariantReader {
 
 	private Connection connection;
 
@@ -16,7 +16,7 @@ public class BgenIndexFileReader {
 
 	private ResultSet result;
 
-	private Variant variant;
+	private Variant variant = new Variant();
 
 	public BgenIndexFileReader(String filename) throws IOException {
 
@@ -29,9 +29,9 @@ public class BgenIndexFileReader {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
 
-			//  ORDER BY chromosome,position ASC is not needed, since in primary key. see docs.
-			query = connection
-					.prepareStatement("SELECT chromosome,position FROM Variant");
+			// ORDER BY chromosome,position ASC is not needed, since in primary key. see
+			// docs.
+			query = connection.prepareStatement("SELECT chromosome,position FROM Variant");
 			result = query.executeQuery();
 
 		} catch (SQLException ex) {
@@ -47,7 +47,6 @@ public class BgenIndexFileReader {
 				return false;
 			}
 
-			variant = new Variant();
 			variant.setContig(result.getString("chromosome"));
 			variant.setStart(result.getInt("position"));
 
