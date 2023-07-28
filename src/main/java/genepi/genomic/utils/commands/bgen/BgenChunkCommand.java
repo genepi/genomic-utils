@@ -95,7 +95,7 @@ public class BgenChunkCommand implements Callable<Integer> {
 
 		writer.close();
 
-		System.out.println("Done. Wrote " + countChunks + " to file '" + output + "'.");
+		System.out.println("Done. Wrote " + countChunks + " chunks to file '" + output + "'.");
 
 		return 0;
 	}
