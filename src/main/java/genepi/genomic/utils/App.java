@@ -2,6 +2,7 @@ package genepi.genomic.utils;
 
 import genepi.genomic.utils.commands.VersionCommand;
 import genepi.genomic.utils.commands.annotate.AnnotateCommand;
+import genepi.genomic.utils.commands.bgen.BgenChunkCommand;
 import genepi.genomic.utils.commands.csv.CsvConcatCommand;
 import genepi.genomic.utils.commands.csv.CsvToBedCommand;
 import genepi.genomic.utils.commands.gwas.GwasReportCommand;
@@ -50,6 +51,7 @@ public class App {
 		commandLine.addSubcommand("vcf-statistics", new VcfStatisticsCommand());
 		commandLine.addSubcommand("vcf-to-csv", new VcfToCsvCommand());
 		commandLine.addSubcommand("vcf-to-csv-transpose", new VcfToCsvTransposeCommand());
+		commandLine.addSubcommand("bgen-chunk", new BgenChunkCommand());
 		commandLine.addSubcommand("version", new VersionCommand());
 
 		commandLine.setExecutionStrategy(new CommandLine.RunLast());
