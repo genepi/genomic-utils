@@ -61,7 +61,7 @@
               </td>
               <td>
                 {{if peak.id != null && peak.id.startsWith("rs")}}
-                  <a href="https://www.ncbi.nlm.nih.gov/snp/{{peak.id}}" target="_blank">
+                  <a href="https://www.ebi.ac.uk/gwas/variants/{{peak.id}}" target="_blank">
                     {{peak.getName()}}
                   </a>
                 {{else}}
@@ -75,7 +75,13 @@
                 {{peak.alt}}
               </td>            
               <td>
-                {{peak.gene}}
+                {{if peak.gene != null && !peak.gene.equals("")}}
+                  <a href="https://www.ebi.ac.uk/gwas/genes/{{peak.gene}}" target="_blank">
+                      {{peak.gene}}
+                  </a>                
+                {{else}}
+                  -
+                {{end}}
               </td>
               <td>
                 {{peak.pval}}
