@@ -307,31 +307,35 @@ public class GwasReportCommand implements Callable<Integer> {
 		int count = 0;
 		while (reader.next()) {
 			count++;
-			Variant variant = new Variant();
-			variant.chrom = reader.getString(chr);
-			variant.pos = reader.getInteger(position);
-			if (pvalFormat == PValFormat.PVAL) {
-				variant.pval = -Math.log10(reader.getDouble(pval));
-			} else {
-				variant.pval = reader.getDouble(pval);
-			}
-			if (rsid != null && !rsid.isEmpty()) {
-				variant.id = reader.getString(rsid);
-			}
-			if (beta != null && !beta.isEmpty()) {
-				variant.beta = reader.getString(beta);
-			}
-			if (gene != null && !gene.isEmpty()) {
-				variant.gene = reader.getString(gene);
-			}
-			if (alt != null && !alt.isEmpty()) {
-				variant.alt = reader.getString(alt);
-			}
-			if (ref != null && !ref.isEmpty()) {
-				variant.ref = reader.getString(ref);
-			}
+			try {
+				Variant variant = new Variant();
+				variant.chrom = reader.getString(chr);
+				variant.pos = reader.getInteger(position);
+				if (pvalFormat == PValFormat.PVAL) {
+					variant.pval = -Math.log10(reader.getDouble(pval));
+				} else {
+					variant.pval = reader.getDouble(pval);
+				}
+				if (rsid != null && !rsid.isEmpty()) {
+					variant.id = reader.getString(rsid);
+				}
+				if (beta != null && !beta.isEmpty()) {
+					variant.beta = reader.getString(beta);
+				}
+				if (gene != null && !gene.isEmpty()) {
+					variant.gene = reader.getString(gene);
+				}
+				if (alt != null && !alt.isEmpty()) {
+					variant.alt = reader.getString(alt);
+				}
+				if (ref != null && !ref.isEmpty()) {
+					variant.ref = reader.getString(ref);
+				}
 
-			binner.process_variant(variant);
+				binner.process_variant(variant);
+			} catch (Exception e) {
+				System.out.println("Ignore variant " + count + ". Error during parsing.");
+			}
 		}
 
 		binner.close();
