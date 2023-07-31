@@ -7,6 +7,7 @@ import genepi.genomic.utils.commands.csv.CsvConcatCommand;
 import genepi.genomic.utils.commands.csv.CsvToBedCommand;
 import genepi.genomic.utils.commands.gwas.GwasReportCommand;
 import genepi.genomic.utils.commands.liftover.LiftoverCommand;
+import genepi.genomic.utils.commands.regenie.RegenieSplitCommand;
 import genepi.genomic.utils.commands.vcf.VcfQualityControlCommand;
 import genepi.genomic.utils.commands.vcf.VcfStatisticsCommand;
 import genepi.genomic.utils.commands.vcf.VcfToCsvCommand;
@@ -52,6 +53,7 @@ public class App {
 		commandLine.addSubcommand("vcf-to-csv", new VcfToCsvCommand());
 		commandLine.addSubcommand("vcf-to-csv-transpose", new VcfToCsvTransposeCommand());
 		commandLine.addSubcommand("bgen-chunk", new BgenChunkCommand());
+		commandLine.addSubcommand("regenie-split", new RegenieSplitCommand());
 		commandLine.addSubcommand("version", new VersionCommand());
 
 		commandLine.setExecutionStrategy(new CommandLine.RunLast());
