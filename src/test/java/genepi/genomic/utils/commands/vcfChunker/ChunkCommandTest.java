@@ -153,6 +153,23 @@ public class ChunkCommandTest {
     }
 
     @Test
+    public void testVcfChunkerByRegionBigFileWithVCFWriter() throws Exception {
+        ChunkCommand command = new ChunkCommand();
+
+        List<String> input = new ArrayList<>();
+
+        input.add("test-data/chunker/data.vcf");
+
+        command.setInput(input);
+        command.setOutput("Manifest.txt");
+        command.setChunksize(5000000);
+        command.setOutputDirectory("test-data/chunker");
+
+        assertEquals(0, (int) (command.call()));
+        assertEquals(13, command.getNumberChunks());
+    }
+
+    @Test
     public void testVcfChunkerByRegionTwoFilesWithVCFWriter() throws Exception {
         ChunkCommand command = new ChunkCommand();
 
@@ -205,5 +222,20 @@ public class ChunkCommandTest {
 
         assertEquals(0, (int) (command.call()));
         assertEquals(2, command.getNumberChunks());
+    }
+
+    @Test
+    public void testVcfChunkerByRegionFileNotFound() throws Exception {
+        ChunkCommand command = new ChunkCommand();
+
+        List<String> input = new ArrayList<>();
+
+        input.add("test-data/chunker/fileNotExisting.vcf");
+
+        command.setInput(input);
+        command.setOutput("Manifest.txt");
+        command.setChunksize(100);
+
+        assertEquals(1, (int) (command.call()));
     }
 }

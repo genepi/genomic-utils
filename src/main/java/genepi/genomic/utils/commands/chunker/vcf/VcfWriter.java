@@ -131,9 +131,9 @@ public class VcfWriter implements IVariantWriter {
     @Override
     public void setFileOutputByChunk(Chunk chunk) {
         if (OUTPUTDIR.equals("")) {
-            this.output = "CHUNK" + chunk.getChunkNumber() + "FROM" + chunk.getStart() + "-" + chunk.getEnd() + ".vcf";
+            this.output = "chunk," + chunk.getChrom() + "," + chunk.getStart() + "," + chunk.getEnd() + ".vcf";
         } else {
-            this.output = OUTPUTDIR + "/CHUNK" + chunk.getChunkNumber() + "FROM" + chunk.getStart() + "-" + chunk.getEnd() + ".vcf";
+            this.output = OUTPUTDIR + "/chunk" + chunk.getChrom() + "," + chunk.getStart() + "," + chunk.getEnd() + ".vcf";
         }
     }
     @Override

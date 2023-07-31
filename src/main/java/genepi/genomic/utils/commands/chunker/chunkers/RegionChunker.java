@@ -4,7 +4,6 @@ import genepi.genomic.utils.commands.chunker.*;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +14,9 @@ public class RegionChunker implements IChunker {
     private int size;
     int chunkNumber = 0;
     private Class<? extends IVariantWriter> writerClass;
+    private int numberVariants = 0;
+    private IVariantWriter writer = null;
+    private Chunk chunk = null;
 
     @Override
     public void setReader(IVariantReader reader) {
@@ -27,16 +29,12 @@ public class RegionChunker implements IChunker {
     }
 
     @Override
-    public void executes() throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void executes() throws Exception {
         this.chunkNumber++;
         int start = 0;
         int end = getSize();
-        Chunk chunk;
         String chrom = "";
-        int numberVariants = 0, numberSamples = reader.getNumberOfAllSamples();
-        List<Variant> variantList = new ArrayList<>(); //List for writer to get all data from variants in chunk
-
-        IVariantWriter writer = null;
+        int numberSamples = reader.getNumberOfAllSamples();
 
         if (writerClass != null) {
             Constructor[] constructor = writerClass.getConstructors();
@@ -47,58 +45,22 @@ public class RegionChunker implements IChunker {
             Variant v = reader.getVariant();
 
             //Check if chromosome is different and not empty
-            if(!v.getChromosome().equals(chrom) && !chrom.isEmpty()) {
+            if (!v.getChromosome().equals(chrom) && !chrom.isEmpty()) {
                 chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples);
-                chunk.setVariants(numberVariants);
-                this.addChunks(chunk);
-                chunkNumber++;
-                numberVariants = 0;
+                this.addChunkToList(chunk);
 
                 start = 0;
                 end = getSize();
                 chrom = v.getChromosome();
-                if(writerClass != null) {
-                    try {
-                        writer.setFileOutputByChunk(chunk);
-                        chunk.setFile(new File(writer.getFileOutput()));
-                        for (Variant variant : variantList) {
-                            writer.setVariant(variant);
-                            writer.write();
-                        }
-                        writer.setCalls(0);
-                        writer.close();
-                        variantList.clear();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    chunk.setFile(reader.getFile());
-                }
+
+                this.writerClassCheck();
             }
-            if (v.getPosition() > end ) {
+            if (v.getPosition() > end) {
                 // Only add chunks with variants
                 if (numberVariants > 0) {
                     chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples);
-                    chunk.setVariants(numberVariants);
-                    this.addChunks(chunk);
-                    chunkNumber++;
-                    if(writerClass != null) {
-                        try {
-                            writer.setFileOutputByChunk(chunk);
-                            chunk.setFile(new File(writer.getFileOutput()));
-                            for (Variant variant : variantList) {
-                                writer.setVariant(variant);
-                                writer.write();
-                            }
-                            writer.setCalls(0);
-                            writer.close();
-                            variantList.clear();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        chunk.setFile(reader.getFile());
-                    }
+                    this.addChunkToList(chunk);
+                    this.writerClassCheck();
                 }
 
                 // Get start and end from next chunk
@@ -117,52 +79,49 @@ public class RegionChunker implements IChunker {
             if (v.getPosition() >= start && v.getPosition() <= end) {
                 // Add variant to current chunk count
                 numberVariants++;
-                if (writerClass != null){
-                    variantList.add(v);
-                    if(variantList.size() >= 500){ //write current 500 variants already to avoid heapspace problem
+                if (writerClass != null) {
+                    if (chunk == null) { //check if chunk already exists --> no need to create new chunk every variant
+                        chrom = v.getChromosome();
                         chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples);
-                        writer.setFileOutputByChunk(chunk);
-                        chunk.setFile(new File(writer.getFileOutput()));
-                        try {
-                            for (Variant variant : variantList) {
-                                writer.setVariant(variant);
-                                writer.write();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        variantList.clear();
                     }
+                    writer.setFileOutputByChunk(chunk);
+                    chunk.setFile(new File(writer.getFileOutput()));
+                    writer.setVariant(v);
+                    writer.write();
                 }
                 if (chrom.isEmpty()) {
                     chrom = v.getChromosome();
                 }
             }
         }
-
         // Create last chunk and add to list if variants exist
         if (numberVariants > 0) {
             chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples);
-            chunk.setVariants(numberVariants);
-            this.addChunks(chunk);
-            if(writerClass != null) {
-                try {
-                    writer.setFileOutputByChunk(chunk);
-                    chunk.setFile(new File(writer.getFileOutput()));
-                    for (Variant variant : variantList) {
-                        writer.setVariant(variant);
-                        writer.write();
-                    }
-                    writer.setCalls(0);
-                    writer.close();
-                    variantList.clear();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                chunk.setFile(reader.getFile());
-            }
+            this.addChunkToList(chunk);
+            this.writerClassCheck();
         }
+    }
+
+    private void writerClassCheck() throws Exception {
+        if (writerClass != null) {
+            try {
+                writer.setFileOutputByChunk(chunk);
+                chunk.setFile(new File(writer.getFileOutput()));
+                writer.setCalls(0);
+                writer.close();
+            } catch (Exception e) {
+                throw new Exception(e.getMessage());
+            }
+        } else {
+            chunk.setFile(reader.getFile());
+        }
+    }
+
+    private void addChunkToList(Chunk chunk) {
+        chunk.setVariants(numberVariants);
+        this.addChunks(chunk);
+        chunkNumber++;
+        numberVariants = 0;
     }
 
     @Override
@@ -179,9 +138,7 @@ public class RegionChunker implements IChunker {
         this.size = size;
     }
 
-    protected void addChunks(Chunk chunk){
+    protected void addChunks(Chunk chunk) {
         this.chunks.add(chunk);
     }
-
-
 }

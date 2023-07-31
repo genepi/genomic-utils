@@ -4,9 +4,9 @@ import genepi.genomic.utils.commands.chunker.chunkers.RegionChunker;
 import genepi.genomic.utils.commands.chunker.chunkers.VariantChunker;
 import genepi.genomic.utils.commands.chunker.vcf.VcfReader;
 import genepi.genomic.utils.commands.chunker.vcf.VcfWriter;
-import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -22,7 +22,7 @@ public class ChunkCommand implements Callable<Integer> {
     @Option(names = "--chunksize", description = "chunksize", required = true)
     private int chunksize;
 
-    @Option(names ="--strategy", description = "chunker strategies:  ${COMPLETION-CANDIDATES}")
+    @Option(names = "--strategy", description = "chunker strategies:  ${COMPLETION-CANDIDATES}")
     private ChunkingStrategy strategy = ChunkingStrategy.CHUNK_BY_REGION;
 
     @Option(names = "--output-dir", description = "output directory")
@@ -32,7 +32,6 @@ public class ChunkCommand implements Callable<Integer> {
     private ChunkingOutput chunkingOutput = ChunkingOutput.VCF;
 
     private int numberChunks;
-
 
     public void setInput(List<String> inputs) {
         this.inputs = inputs;
@@ -50,7 +49,7 @@ public class ChunkCommand implements Callable<Integer> {
         this.strategy = strategy;
     }
 
-    public int getNumberChunks(){
+    public int getNumberChunks() {
         return this.numberChunks;
     }
 
@@ -91,22 +90,22 @@ public class ChunkCommand implements Callable<Integer> {
 
         IManifestWriter manifestWriter;
 
-        if(!outputDirectory.equals("")){
+        if (!outputDirectory.equals("")) {
             VcfWriter.setOutputDir(outputDirectory);
             chunker.setWriterClass(VcfWriter.class);
-            manifestWriter = new ManifestWriter(outputDirectory + "/"  + output);
+            manifestWriter = new ManifestWriter(outputDirectory + "/" + output);
         } else {
             manifestWriter = new ManifestWriter(output);
         }
 
         chunker.setSize(chunksize);
-        for (String input : inputs){
+        for (String input : inputs) {
             try {
                 chunker.setReader(new VcfReader(new File(input)));
                 chunker.executes();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return 0;
+                System.out.println("ERROR: " + e.getMessage());
+                return 1;
             }
         }
         setNumberChunks(chunker.getChunks().size());
@@ -114,9 +113,5 @@ public class ChunkCommand implements Callable<Integer> {
         manifestWriter.setVcfChunks(chunker.getChunks());
         manifestWriter.write();
         return 0;
-    }
-    public static void main(String... args) {
-        int exitCode = new CommandLine(new ChunkCommand()).execute(args);
-        System.exit(exitCode);
     }
 }

@@ -56,7 +56,7 @@ public class RegionChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerOnlyChunk4() throws Exception{
+    public void testVcfRegionChunkerOnlyChunk4() throws Exception {
         File file = new File("test-data/chunker/dataOnlyChunk4.vcf");
         VcfReader reader = new VcfReader(file);
         ManifestWriter manifestWriter = new ManifestWriter("Manifest.txt");
@@ -76,7 +76,7 @@ public class RegionChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerVariantAtChunkLimit() throws Exception{
+    public void testVcfRegionChunkerVariantAtChunkLimit() throws Exception {
         File file = new File("test-data/chunker/dataAllLimits.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new RegionChunker();
@@ -94,7 +94,7 @@ public class RegionChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerBigFile() throws Exception{
+    public void testVcfRegionChunkerBigFile() throws Exception {
         File file = new File("test-data/chunker/data.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new RegionChunker();
@@ -112,7 +112,7 @@ public class RegionChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerEmptyChunk() throws Exception{
+    public void testVcfRegionChunkerEmptyChunk() throws Exception {
         File file = new File("test-data/chunker/dataSmall.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new RegionChunker();
@@ -130,7 +130,7 @@ public class RegionChunkerTest {
     }
 
     @Test
-    public void testVcfRegionChunkerStringChromosome() throws Exception{
+    public void testVcfRegionChunkerStringChromosome() throws Exception {
         File file = new File("test-data/chunker/dataStringChromosomes.vcf");
         VcfReader reader = new VcfReader(file);
         IChunker chunker = new RegionChunker();
