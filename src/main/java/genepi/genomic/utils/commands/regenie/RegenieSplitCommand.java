@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 
-import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.reader.ITableReader;
 import genepi.io.text.GzipLineWriter;
@@ -81,10 +80,9 @@ public class RegenieSplitCommand implements Callable<Integer> {
 			System.out.println("Phenotype '" + phenotype.getName() + "': " + phenotype.getColumns());
 		}
 
-		FileUtil.createDirectory(output);
 		List<GzipLineWriter> writers = new Vector<GzipLineWriter>();
 		for (Phenotype phenotype : phenotypes) {
-			String filename = FileUtil.path(output, phenotype.getFilename());
+			String filename = output + phenotype.getFilename();
 			GzipLineWriter writer = new GzipLineWriter(filename);
 			writer.write(createHeader(fixedColumns, phenotype));
 			writers.add(writer);
