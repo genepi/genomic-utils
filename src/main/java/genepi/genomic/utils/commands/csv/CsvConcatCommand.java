@@ -1,12 +1,15 @@
 package genepi.genomic.utils.commands.csv;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.Callable;
 
+import genepi.genomic.utils.commands.csv.writer.GzipLineWriter;
+import genepi.genomic.utils.commands.csv.writer.ILineWriter;
+import genepi.genomic.utils.commands.csv.writer.LineWriter;
 import genepi.io.table.reader.CsvTableReader;
-import genepi.io.table.writer.CsvTableWriter;
+import genepi.io.table.reader.ITableReader;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -23,12 +26,19 @@ public class CsvConcatCommand implements Callable<Integer> {
 	@Option(names = "--separator", description = "separator. default: ,", required = false)
 	private char separator = ',';
 
+	@Option(names = "--gz", description = "Write output as gz file")
+	private boolean gzip = false;
+
 	public void setInputs(List<String> inputs) {
 		this.inputs = inputs;
 	}
 
 	public void setOutput(String output) {
 		this.output = output;
+	}
+
+	public void setGzip(boolean gzip) {
+		this.gzip = gzip;
 	}
 
 	@Override
@@ -42,11 +52,19 @@ public class CsvConcatCommand implements Callable<Integer> {
 		}
 
 		CsvTableReader reader = new CsvTableReader(inputs.get(0), separator);
+
+		String[] outputColumns = reader.getColumns();
 		HashSet<String> columns = new HashSet(Arrays.asList(reader.getColumns()));
 		reader.close();
 
-		CsvTableWriter writer = new CsvTableWriter(output, separator);
-		writer.setColumns(reader.getColumns());
+		ILineWriter writer = null;
+		if (gzip) {
+			writer = new GzipLineWriter(output);
+		} else {
+			writer = new LineWriter(output);
+		}
+
+		writer.write(createHeader(outputColumns));
 
 		for (String input : inputs) {
 			reader = new CsvTableReader(input, separator);
@@ -58,10 +76,7 @@ public class CsvConcatCommand implements Callable<Integer> {
 			}
 
 			while (reader.next()) {
-				for (String column : columns) {
-					writer.setString(column, reader.getString(column));
-				}
-				writer.next();
+				writer.write(createLine(reader, outputColumns));
 			}
 			reader.close();
 		}
@@ -69,6 +84,28 @@ public class CsvConcatCommand implements Callable<Integer> {
 		writer.close();
 
 		return 0;
+	}
+
+	private String createHeader(String[] columns) {
+		StringBuffer buffer = new StringBuffer();
+		for (String column : columns) {
+			if (buffer.length()!=0) {
+				buffer.append(separator);
+			}
+			buffer.append(column);
+		}
+		return buffer.toString();
+	}
+
+	private String createLine(ITableReader reader, String[] columns) {
+		StringBuffer buffer = new StringBuffer();
+		for (String column : columns) {
+			if (buffer.length()!=0) {
+				buffer.append(separator);
+			}
+			buffer.append(reader.getString(column));
+		}
+		return buffer.toString();
 	}
 
 }

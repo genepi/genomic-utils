@@ -30,7 +30,6 @@ public class RegenieSplitCommand implements Callable<Integer> {
 	@Option(names = "--output-sep", description = "output separator. default: space", required = false)
 	private char outputSeparator = ' ';
 
-	
 	public void setInput(String input) {
 		this.input = input;
 	}
@@ -106,23 +105,23 @@ public class RegenieSplitCommand implements Callable<Integer> {
 	private String createHeader(List<String> fixedColumns, Phenotype phenotype) {
 		StringBuffer buffer = new StringBuffer();
 		for (String column : fixedColumns) {
-			if (!buffer.isEmpty()) {
+			if (buffer.length() != 0) {
 				buffer.append(outputSeparator);
 			}
 			buffer.append(column);
 		}
-		for (String column : phenotype.getColumns()) {			
+		for (String column : phenotype.getColumns()) {
 			buffer.append(outputSeparator);
 			String cleanColumn = phenotype.cleanColumn(column);
 			buffer.append(cleanColumn);
 		}
 		return buffer.toString();
 	}
-	
+
 	private String createLine(ITableReader reader, List<String> fixedColumns, List<String> columns) {
 		StringBuffer buffer = new StringBuffer();
 		for (String column : fixedColumns) {
-			if (!buffer.isEmpty()) {
+			if (buffer.length() != 0) {
 				buffer.append(outputSeparator);
 			}
 			buffer.append(reader.getString(column));
@@ -133,7 +132,6 @@ public class RegenieSplitCommand implements Callable<Integer> {
 		}
 		return buffer.toString();
 	}
-
 
 	private List<Phenotype> readDictionary(String dict) throws IOException {
 		List<Phenotype> phenotypes = new Vector<Phenotype>();
@@ -161,7 +159,7 @@ public class RegenieSplitCommand implements Callable<Integer> {
 			this.id = id;
 			this.name = name;
 		}
-		
+
 		public String getId() {
 			return id;
 		}
@@ -197,7 +195,7 @@ public class RegenieSplitCommand implements Callable<Integer> {
 		public String cleanColumn(String column) {
 			return column.replaceAll("." + id, "");
 		}
-		
+
 		public String getFilename() {
 			return name + ".regenie.gz";
 		}
