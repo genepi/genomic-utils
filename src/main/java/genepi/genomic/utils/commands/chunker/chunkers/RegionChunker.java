@@ -17,6 +17,7 @@ public class RegionChunker implements IChunker {
     private int numberVariants = 0;
     private IVariantWriter writer = null;
     private Chunk chunk = null;
+//    private List<Variant> variantList;
 
     @Override
     public void setReader(IVariantReader reader) {
@@ -54,6 +55,7 @@ public class RegionChunker implements IChunker {
                 chrom = v.getChromosome();
 
                 this.writerClassCheck();
+                this.chunk = null;
             }
             if (v.getPosition() > end) {
                 // Only add chunks with variants
@@ -61,6 +63,7 @@ public class RegionChunker implements IChunker {
                     chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples);
                     this.addChunkToList(chunk);
                     this.writerClassCheck();
+                    this.chunk = null;
                 }
 
                 // Get start and end from next chunk
@@ -80,6 +83,7 @@ public class RegionChunker implements IChunker {
                 // Add variant to current chunk count
                 numberVariants++;
                 if (writerClass != null) {
+
                     if (chunk == null) { //check if chunk already exists --> no need to create new chunk every variant
                         chrom = v.getChromosome();
                         chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples);

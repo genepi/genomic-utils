@@ -61,6 +61,7 @@ public class VariantChunker implements IChunker {
                 chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples);
                 this.addChunkToList(chunk);
                 this.writerClassCheck();
+                this.chunk = null;
 
                 // Reset chunk-related information
                 numberVariants = 0;
@@ -92,6 +93,7 @@ public class VariantChunker implements IChunker {
             chunk = new Chunk(chunkNumber, chrom, start, end, numberSamples);
             this.addChunkToList(chunk);
             this.writerClassCheck();
+            this.chunk = null;
         }
     }
 
