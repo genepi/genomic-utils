@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import genepi.genomic.utils.commands.annotate.io.AnnotationFileReader;
+import genepi.genomic.utils.commands.annotate.io.*;
 import genepi.genomic.utils.commands.annotate.io.AnnotationMatchingStrategy;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.writer.CsvTableWriter;
+import genepi.io.table.writer.ITableWriter;
 import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -70,6 +71,9 @@ public class AnnotateCommand implements Callable<Integer> {
 
 	@Option(names = { "--output-quote" }, description = "Quote entries in output file", required = false)
 	private boolean outputQuote = false;
+
+	@Option(names = { "--output-gzip" }, description = "Write file as gzip", required = false)
+	private boolean outputGzip = false;
 
 	@Option(names = {
 			"--suppress-warnings" }, description = "Suppress warnings", required = false, showDefaultValue = Visibility.ALWAYS)
@@ -183,7 +187,12 @@ public class AnnotateCommand implements Callable<Integer> {
 			return 1;
 		}
 
-		CsvTableWriter writer = new CsvTableWriter(output, outputSep, outputQuote);
+		ITableWriter writer = null;
+		if (outputGzip) {
+			writer = new GzipCsvTableWriter(output, outputSep, outputQuote);
+		} else {
+			writer = new CsvTableWriter(output, outputSep, outputQuote);
+		}
 		String[] inputColumns = reader.getColumns();
 		String[] outputColumns = concat(annotationColumns, inputColumns);
 
