@@ -2,6 +2,8 @@ package genepi.genomic.utils;
 
 import genepi.genomic.utils.commands.VersionCommand;
 import genepi.genomic.utils.commands.annotate.AnnotateCommand;
+import genepi.genomic.utils.commands.annotate.AnnotateGenesCommand;
+import genepi.genomic.utils.commands.annotate.AnnotatePrepareCommand;
 import genepi.genomic.utils.commands.bgen.BgenChunkCommand;
 import genepi.genomic.utils.commands.csv.CsvConcatCommand;
 import genepi.genomic.utils.commands.csv.CsvToBedCommand;
@@ -44,6 +46,8 @@ public class App {
 
 		CommandLine commandLine = new CommandLine(new App());
 		commandLine.addSubcommand("annotate", new AnnotateCommand());
+		commandLine.addSubcommand("annotate-genes", new AnnotateGenesCommand());
+		commandLine.addSubcommand("annotate-prepare", new AnnotatePrepareCommand());
 		commandLine.addSubcommand("csv-to-bed", new CsvToBedCommand());
 		commandLine.addSubcommand("csv-concat", new CsvConcatCommand());
 		commandLine.addSubcommand("gwas-report", new GwasReportCommand());
