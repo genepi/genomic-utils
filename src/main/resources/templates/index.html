@@ -76,9 +76,11 @@
               </td>            
               <td>
                 {{if peak.gene != null && !peak.gene.equals("")}}
-                  <a href="https://www.ebi.ac.uk/gwas/genes/{{peak.gene}}" target="_blank">
-                      {{peak.gene}}
-                  </a>                
+                  {{for gene in peak.gene.split(",")}}
+                  <a href="https://www.ebi.ac.uk/gwas/genes/{{gene}}" target="_blank">
+                      {{gene}}
+                  </a>
+                  {{end}}                
                 {{else}}
                   -
                 {{end}}
