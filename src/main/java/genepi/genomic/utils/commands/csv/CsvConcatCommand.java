@@ -23,8 +23,11 @@ public class CsvConcatCommand implements Callable<Integer> {
 	@Option(names = "--output", description = "output bed file", required = true)
 	private String output;
 
-	@Option(names = "--separator", description = "separator. default: ,", required = false)
+	@Option(names = "--separator", description = "Input separator. default: ,", required = false)
 	private char separator = ',';
+	
+	@Option(names = { "--output-sep" }, description = "Output Separator. default: ,", required = false)
+	private char outputSeparator = ',';
 
 	@Option(names = "--gz", description = "Write output as gz file")
 	private boolean gzip = false;
@@ -90,7 +93,7 @@ public class CsvConcatCommand implements Callable<Integer> {
 		StringBuffer buffer = new StringBuffer();
 		for (String column : columns) {
 			if (buffer.length()!=0) {
-				buffer.append(separator);
+				buffer.append(outputSeparator);
 			}
 			buffer.append(column);
 		}
@@ -101,7 +104,7 @@ public class CsvConcatCommand implements Callable<Integer> {
 		StringBuffer buffer = new StringBuffer();
 		for (String column : columns) {
 			if (buffer.length()!=0) {
-				buffer.append(separator);
+				buffer.append(outputSeparator);
 			}
 			buffer.append(reader.getString(column));
 		}
