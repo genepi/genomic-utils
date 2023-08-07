@@ -9,6 +9,7 @@ import genepi.genomic.utils.commands.csv.CsvConcatCommand;
 import genepi.genomic.utils.commands.csv.CsvFilterCommand;
 import genepi.genomic.utils.commands.csv.CsvToBedCommand;
 import genepi.genomic.utils.commands.gwas.GwasReportCommand;
+import genepi.genomic.utils.commands.gwas.GwasReportIndexCommand;
 import genepi.genomic.utils.commands.liftover.LiftoverCommand;
 import genepi.genomic.utils.commands.regenie.RegenieSplitCommand;
 import genepi.genomic.utils.commands.vcf.VcfQualityControlCommand;
@@ -53,6 +54,7 @@ public class App {
 		commandLine.addSubcommand("csv-concat", new CsvConcatCommand());
 		commandLine.addSubcommand("csv-filter", new CsvFilterCommand());
 		commandLine.addSubcommand("gwas-report", new GwasReportCommand());
+		commandLine.addSubcommand("gwas-report-index", new GwasReportIndexCommand());
 		commandLine.addSubcommand("liftover", new LiftoverCommand());
 		commandLine.addSubcommand("vcf-quality-control", new VcfQualityControlCommand());
 		commandLine.addSubcommand("vcf-statistics", new VcfStatisticsCommand());
