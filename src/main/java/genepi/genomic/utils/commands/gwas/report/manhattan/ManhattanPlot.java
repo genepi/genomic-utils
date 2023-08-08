@@ -324,7 +324,11 @@ public class ManhattanPlot {
 				annotation.put("xref", "x");
 				annotation.put("yref", "y");
 				if (annotationType == AnnotationType.GENE) {
-					annotation.put("text", "<i>" + variant.gene.replaceAll(",", "<br>") + "</i>");
+					if (variant.gene != null) {
+						annotation.put("text", "<i>" + variant.gene.replaceAll(",", "<br>") + "</i>");
+					} else {
+						annotation.put("text", "<i></i>");
+					}
 				} else {
 					annotation.put("text", variant.getName());
 				}
@@ -333,7 +337,7 @@ public class ManhattanPlot {
 				annotation.put("arrowhead", 0);
 				annotation.put("bordercolor", "#aaaaaa");
 				annotation.put("ay", -40);
-				//annotation.put("textangle", -90);
+				// annotation.put("textangle", -90);
 				annotations.add(annotation);
 			}
 		}

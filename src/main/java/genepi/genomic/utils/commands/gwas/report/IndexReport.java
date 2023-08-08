@@ -48,8 +48,8 @@ public class IndexReport {
 
 		HtmlReport report = new HtmlReport("/templates/index");
 		report.setMainFilename("report.html");
-		report.set("application", App.APP);
-		report.set("version", App.VERSION);
+		report.set("application", "nf-gwas");
+		report.set("version", "");
 		report.set("project", title);
 		report.set("date", "date");
 		report.set("phenotypes", phenotypes);
