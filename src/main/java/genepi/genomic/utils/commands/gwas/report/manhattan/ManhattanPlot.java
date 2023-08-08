@@ -214,7 +214,7 @@ public class ManhattanPlot {
 		});
 
 		List<Object> traces2 = new Vector<Object>();
-		for (int i = 0; i < maxAnnotations; i++) {
+		for (int i = 0; i < maxAnnotations && i < traces.size(); i++) {
 			traces2.add(traces.get(i));
 		}
 
