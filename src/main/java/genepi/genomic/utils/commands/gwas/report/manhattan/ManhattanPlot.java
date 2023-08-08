@@ -1,5 +1,6 @@
 package genepi.genomic.utils.commands.gwas.report.manhattan;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,8 @@ public class ManhattanPlot {
 
 	private int countPoints = 0;
 
+	private int maxAnnotations = 20;
+
 	public ManhattanPlot(BinningAlgorithm binning) {
 		this.binning = binning;
 	}
@@ -89,6 +92,10 @@ public class ManhattanPlot {
 
 	public void setSuggestiveSignificanceLine(double suggestiveSignificanceLine) {
 		this.suggestiveSignificanceLine = suggestiveSignificanceLine;
+	}
+
+	public void setMaxAnnotations(int maxAnnotations) {
+		this.maxAnnotations = maxAnnotations;
 	}
 
 	public void setPeaks(List<Variant> peaks) {
@@ -162,8 +169,9 @@ public class ManhattanPlot {
 
 	private List<Object> getSignifanceLines() {
 		List<Object> shapes = new Vector<>();
-		shapes.add(PlotlyUtil.createHorizontalLine(suggestiveSignificanceLine, SUGGESTIVE_SIGNIFICANCE_LINE_COLOR,
-				SUGGESTIVE_SIGNIFICANCE_LINE_WIDTH, SUGGESTIVE_SIGNIFICANCE_LINE_STYLE));
+		// shapes.add(PlotlyUtil.createHorizontalLine(suggestiveSignificanceLine,
+		// SUGGESTIVE_SIGNIFICANCE_LINE_COLOR,
+		// SUGGESTIVE_SIGNIFICANCE_LINE_WIDTH, SUGGESTIVE_SIGNIFICANCE_LINE_STYLE));
 		shapes.add(PlotlyUtil.createHorizontalLine(genomwideSignificanceLine, GENOMEWIDE_SIGNIFICANCE_LINE_COLOR,
 				GENOMEWIDE_SIGNIFICANCE_LINE_WIDTH, GENOMEWIDE_SIGNIFICANCE_LINE_STYLE));
 		return shapes;
@@ -194,7 +202,23 @@ public class ManhattanPlot {
 			traces.addAll(getAnnotationsByChromosome(chr, offset, annotationType));
 			offset = updateOffset(offset, chr);
 		}
-		return traces;
+
+		// keep only maxAnnotations annotations
+		traces.sort(new Comparator<Object>() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				Map<String, Object> a1 = (Map<String, Object>) o1;
+				Map<String, Object> a2 = (Map<String, Object>) o2;
+				return -Double.compare((double) a1.get("y"), (double) a2.get("y"));
+			}
+		});
+
+		List<Object> traces2 = new Vector<Object>();
+		for (int i = 0; i < maxAnnotations; i++) {
+			traces2.add(traces.get(i));
+		}
+
+		return traces2;
 	}
 
 	private Map<String, Object> getXAxis() {
@@ -293,22 +317,25 @@ public class ManhattanPlot {
 		List<Object> annotations = new Vector<Object>();
 		ChromBin bin = bins.get(chrIndex);
 		for (Variant variant : bin.getPeakVariants()) {
-			Map<String, Object> annotation = new HashMap<>();
-			annotation.put("x", (variant.pos / BIN_SIZE) + offset);
-			annotation.put("y", mapY(variant.pval));
-			annotation.put("xref", "x");
-			annotation.put("yref", "y");
-			if (annotationType == AnnotationType.GENE) {
-				annotation.put("text", "<i>" + variant.gene + "</i>");
-			} else {
-				annotation.put("text", variant.getName());
+			if (variant.pval >= genomwideSignificanceLine) {
+				Map<String, Object> annotation = new HashMap<>();
+				annotation.put("x", (variant.pos / BIN_SIZE) + offset);
+				annotation.put("y", mapY(variant.pval));
+				annotation.put("xref", "x");
+				annotation.put("yref", "y");
+				if (annotationType == AnnotationType.GENE) {
+					annotation.put("text", "<i>" + variant.gene.replaceAll(",", "<br>") + "</i>");
+				} else {
+					annotation.put("text", variant.getName());
+				}
+				annotation.put("ax", 0);
+				annotation.put("showarrow", true);
+				annotation.put("arrowhead", 0);
+				annotation.put("bordercolor", "#aaaaaa");
+				annotation.put("ay", -40);
+				annotation.put("textangle", -90);
+				annotations.add(annotation);
 			}
-			annotation.put("ax", 0);
-			annotation.put("showarrow", true);
-			annotation.put("arrowhead", 0);
-			annotation.put("bordercolor", "#aaaaaa");
-			annotation.put("ay", -40);
-			annotations.add(annotation);
 		}
 		return annotations;
 	}

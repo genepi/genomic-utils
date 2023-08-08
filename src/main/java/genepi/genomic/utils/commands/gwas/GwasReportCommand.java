@@ -109,6 +109,10 @@ public class GwasReportCommand implements Callable<Integer> {
 	private double peakVariantCountingPvalThreshold = Binner.DEFAULT_PEAK_VARIANT_COUNTING_PVAL_THRESHOLD;
 
 	@Option(names = {
+			"--max-annotations" }, description = "maximal number of annotations", required = false, showDefaultValue = Visibility.ALWAYS)
+	private int maxAnnotations = 20;
+
+	@Option(names = {
 			"--index" }, description = "Create index html file. Possible values: ${COMPLETION-CANDIDATES}", required = false)
 	private IndexCreationMode index = IndexCreationMode.AUTO;
 
@@ -351,6 +355,7 @@ public class GwasReportCommand implements Callable<Integer> {
 		data.setUnbinnedVariants(new ArrayList<Variant>(binner.getUnbinnedVariants()));
 		data.setGenomwideSignificanceLine(peakVariantCountingPvalThreshold);
 		data.setSuggestiveSignificanceLine(peakPvalThreshold);
+		data.setMaxAnnotations(maxAnnotations);
 
 		if (format == OutputFormat.HTML) {
 			Report report = new Report(data);
