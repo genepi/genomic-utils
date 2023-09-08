@@ -20,13 +20,13 @@ public class CsvFilterCommand implements Callable<Integer> {
 
 	@Option(names = "--output", description = "Output file ", required = true)
 	private String output;
-	
+
 	@Option(names = "--filter-column", description = "Column name to apply filter", required = true)
 	private String filterColumn = "";
-	
+
 	@Option(names = "--ignore-values", description = "Values to ignore from the filter column", required = false)
 	private String ignoreValues = "";
-	
+
 	@Option(names = "--limit", description = "Specifiy upper limit to filter", required = true)
 	private double limit;
 
@@ -35,7 +35,7 @@ public class CsvFilterCommand implements Callable<Integer> {
 
 	@Option(names = "--output-sep", description = "Separator of output file. default: ,", required = false, showDefaultValue = Visibility.ALWAYS)
 	private char outputSeparator = ',';
-	
+
 	@Option(names = { "--gz" }, description = "Write file as gzip", required = false)
 	private boolean outputGzip = false;
 
@@ -49,27 +49,27 @@ public class CsvFilterCommand implements Callable<Integer> {
 	public void setOutput(String output) {
 		this.output = output;
 	}
-	
+
 	public void setGzip(boolean outputGzip) {
 		this.outputGzip = outputGzip;
 	}
-	
+
 	public void setSeparator(char sep) {
 		this.separator = sep;
 	}
-	
+
 	public void setOutputSeparator(char outputSep) {
 		this.outputSeparator = outputSep;
 	}
-	
+
 	public void setLimit(int limit) {
 		this.limit = limit;
 	}
-	
+
 	public void setFilterColumn(String filterColumn) {
 		this.filterColumn = filterColumn;
 	}
-	
+
 	public void setIgnoreValues(String ignoreValues) {
 		this.ignoreValues = ignoreValues;
 	}
@@ -78,7 +78,7 @@ public class CsvFilterCommand implements Callable<Integer> {
 
 		assert (input != null);
 		assert (output != null);
-		
+
 		ITableWriter writer = null;
 		if (outputGzip) {
 			writer = new GzipCsvTableWriter(output, outputSeparator, outputQuote);
@@ -86,25 +86,31 @@ public class CsvFilterCommand implements Callable<Integer> {
 			writer = new CsvTableWriter(output, outputSeparator, outputQuote);
 		}
 
-		List<String> ignoreList = Arrays.asList(ignoreValues.split(","));  
-		
+		List<String> ignoreList = Arrays.asList(ignoreValues.split(","));
+
 		CsvTableReader reader = new CsvTableReader(input, separator);
 
 		writer.setColumns(reader.getColumns());
-		
-		if(!reader.hasColumn(filterColumn)) {
+
+		if (!reader.hasColumn(filterColumn)) {
 			System.err.println("Column " + filterColumn + "not found.");
 			return 1;
 		}
 
+		int line = 0;
 		while (reader.next()) {
-
+			line++;
 			String value = reader.getString(filterColumn);
-			if (ignoreList.contains(value) || Double.valueOf(value) < limit) {
-				continue;
+			try {
+
+				if (ignoreList.contains(value) || Double.valueOf(value) < limit) {
+					continue;
+				}
+				writer.setRow(reader.getRow());
+				writer.next();
+			} catch (NumberFormatException e) {
+				System.out.println("Ignoring line " + line + ". Value '" + value + "' cannot be parsed.");
 			}
-			writer.setRow(reader.getRow());
-			writer.next();
 		}
 
 		reader.close();
