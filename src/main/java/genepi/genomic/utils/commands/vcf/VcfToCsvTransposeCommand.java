@@ -21,8 +21,6 @@ import picocli.CommandLine.Option;
 @Command
 public class VcfToCsvTransposeCommand implements Callable<Integer> {
 
-	private static final char PARTS_SEPARATOR = ',';
-
 	private static final String SAMPLE_COLUMN = "sample";
 
 	@Option(names = "--input", description = "input vcf file", required = true)
@@ -34,7 +32,7 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 	@Option(names = "--format", description = "output format. xls or csv. default: csv", required = false)
 	private String format = "csv";
 
-	@Option(names = "--genotypes", description = "genotypes: GT or DS", required = false)
+	@Option(names = "--genotypes", description = "genotypes: `GT` or `DS` or `GT_as_DS`. default: GT", required = false)
 	private String genotypes = "GT";
 
 	@Option(names = "--name", description = "column name. id or pos. default: pos", required = false)
@@ -42,6 +40,12 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 
 	@Option(names = "--chunk-size", description = "column name. id or pos. default: 5000", required = false)
 	private int chunk = 100;
+
+	@Option(names = "--separator", description = "separator for output file. default: ,", required = false)
+	private char separator = ',';
+
+	@Option(names = "--quotes", description = "use quote in output file. default: true", required = false)
+	private boolean quotes = true;
 
 	public void setInput(String input) {
 		this.input = input;
@@ -57,6 +61,14 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 
 	public void setGenotypes(String genotypes) {
 		this.genotypes = genotypes;
+	}
+
+	public void setQuotes(boolean quotes) {
+		this.quotes = quotes;
+	}
+
+	public void setSeparator(char separator) {
+		this.separator = separator;
 	}
 
 	@Override
@@ -92,13 +104,17 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 
 				for (String sample : samples) {
 					String value = "";
-					if (genotypes.equals("GT")) {
+					if (genotypes.equalsIgnoreCase("GT")) {
 						value = variant.getGenotype(sample).getGenotypeString();
-					} else if (genotypes.equals("DS")) {
+					}else if (genotypes.equalsIgnoreCase("GT_as_DS")){
+						value = "" + variant.getGenotype(sample).countAllele(variant.getAlternateAllele(0));
+					} else if (genotypes.equalsIgnoreCase("DS")) {
 						value = variant.getGenotype(sample).getAttributeAsString("DS", "");
 						if (value.isEmpty()) {
 							value = "" + variant.getGenotype(sample).countAllele(variant.getAlternateAllele(0));
 						}
+					} else {
+						throw new RuntimeException("Unknown genotypes option.");
 					}
 					samplesGenotypes.get(sample).add(value);
 				}
@@ -133,7 +149,7 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 		if (format.equals("xls")) {
 			writer = new ExcelTableWriter(output);
 		} else {
-			writer = new CsvTableWriter(output);
+			writer = new CsvTableWriter(output, separator, quotes);
 		}
 
 		ITableReader[] readers = new ITableReader[parts.size()];
@@ -142,7 +158,7 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 		columns.add(SAMPLE_COLUMN);
 
 		for (int i = 0; i < parts.size(); i++) {
-			CsvTableReader reader = new CsvTableReader(parts.get(i), PARTS_SEPARATOR);
+			CsvTableReader reader = new CsvTableReader(parts.get(i), separator);
 			for (String column : reader.getColumns()) {
 				if (!column.equals(SAMPLE_COLUMN)) {
 					columns.add(column);
@@ -196,7 +212,7 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 		columns.add(SAMPLE_COLUMN);
 		columns.addAll(snps);
 
-		ITableWriter writer = new CsvTableWriter(output, PARTS_SEPARATOR);
+		ITableWriter writer = new CsvTableWriter(output, separator, quotes);
 		writer.setColumns(columns.toArray(new String[0]));
 
 		for (String sample : samples) {

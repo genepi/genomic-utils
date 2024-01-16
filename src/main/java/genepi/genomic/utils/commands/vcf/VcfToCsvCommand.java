@@ -25,8 +25,14 @@ public class VcfToCsvCommand implements Callable<Integer> {
 	@Option(names = "--format", description = "output format. xls or csv. default: csv", required = false)
 	private String format = "csv";
 
-	@Option(names = "--genotypes", description = "genotypes: GT or DS", required = false)
+	@Option(names = "--genotypes", description = "genotypes: `GT` or `DS` or `GT_as_DS`. default: GT", required = false)
 	private String genotypes = "GT";
+
+	@Option(names = "--separator", description = "separator for output file. default: ,", required = false)
+	private char separator = ',';
+
+	@Option(names = "--quotes", description = "use quote in output file. default: true", required = false)
+	private boolean quotes = true;
 
 	public void setInput(String input) {
 		this.input = input;
@@ -69,7 +75,7 @@ public class VcfToCsvCommand implements Callable<Integer> {
 		if (format.equals("xls")) {
 			writer = new ExcelTableWriter(output);
 		} else {
-			writer = new CsvTableWriter(output);
+			writer = new CsvTableWriter(output, separator, quotes);
 		}
 
 		writer.setColumns(columns.toArray(new String[0]));
@@ -92,10 +98,16 @@ public class VcfToCsvCommand implements Callable<Integer> {
 			writer.setString("r2", variant.getAttributeAsString("R2", ""));
 
 			for (String sample : samples) {
-				if (genotypes.equals("GT")) {
+				if (genotypes.equalsIgnoreCase("GT")) {
 					writer.setString(sample, variant.getGenotype(sample).getGenotypeString());
-				} else if (genotypes.equals("DS")) {
-					writer.setString(sample, variant.getGenotype(sample).getAttributeAsString("DS", ""));
+				}else if (genotypes.equalsIgnoreCase("GT_as_DS")){
+					writer.setString(sample,""+variant.getGenotype(sample).countAllele(variant.getAlternateAllele(0)));
+				} else if (genotypes.equalsIgnoreCase("DS")) {
+					String value = variant.getGenotype(sample).getAttributeAsString("DS", "");
+					if (value.isEmpty()) {
+						value = "" + variant.getGenotype(sample).countAllele(variant.getAlternateAllele(0));
+					}
+					writer.setString(sample, value);
 				}
 			}
 			writer.next();
