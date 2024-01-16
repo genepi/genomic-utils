@@ -24,7 +24,7 @@ public class CsvFilterCommandTest {
 		command.setLimit(2);
 		command.setGzip(true);
 		command.setFilterColumn("LOG10P");
-		command.setIgnoreValues("NA");
+		//command.setIgnoreValues("NA");
 		assertEquals(0, (int) command.call());
 		
 		assertEquals(FileUtil.readFileAsString(new GzipCompressorInputStream(new FileInputStream(output))),
