@@ -127,7 +127,7 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 		}
 		reader.close();
 
-		if (snps.size() >= chunk) {
+		if (!snps.isEmpty()) {
 			writePartFile(output, parts, samples, snps, samplesGenotypes);
 		}
 
