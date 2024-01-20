@@ -6,7 +6,7 @@
 
 	<groupId>genepi</groupId>
 	<artifactId>genomic-utils</artifactId>
-	<version>0.3.7</version>
+	<version>0.3.8</version>
 	<packaging>jar</packaging>
 
 	<name>genomic-utils</name>
