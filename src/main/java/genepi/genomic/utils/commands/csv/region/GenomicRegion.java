@@ -34,11 +34,25 @@ public class GenomicRegion {
 		this.end = end;
 	}
 
-	public GenomicRegion parse(String string) throws IOException {
+	public static GenomicRegion parse(String string, String build) throws IOException {
 
 		if (string.startsWith("rs")) {
-			// TODO: convert rsId to position. needs build.
-			throw new IOException("RsIDs no yet supported.");
+
+			if (DbSnpIndex.getFilename() == null) {
+				throw new IOException("RsIDs no supported. No dbSNP Index file set.");
+			}
+
+			DbSnpReader dbsnp = new DbSnpReader(DbSnpIndex.getFilename());
+			Snp snp = dbsnp.getByRsId(string);
+			if (snp == null) {
+				throw new IOException("SNP '" + string + "' not found.");
+			}
+
+			GenomicRegion location = new GenomicRegion();
+			location.chromosome = chromosome(snp.getChromosome(), build);
+			location.start = (int) snp.getPosition();
+			location.end = (int) snp.getPosition();
+			return location;
 		}
 
 		// bed
@@ -46,7 +60,7 @@ public class GenomicRegion {
 			String[] tiles = string.split("\t");
 			if (tiles.length == 3) {
 				GenomicRegion location = new GenomicRegion();
-				location.chromosome = tiles[0];
+				location.chromosome = chromosome(tiles[0], build);
 				int start = Integer.parseInt(tiles[1]);
 				location.start = start;
 				int end = Integer.parseInt(tiles[2]);
@@ -61,7 +75,7 @@ public class GenomicRegion {
 					String[] tiles2 = tiles[1].split("-");
 					if (tiles2.length == 2) {
 						GenomicRegion location = new GenomicRegion();
-						location.chromosome = tiles[0];
+						location.chromosome = chromosome(tiles[0], build);
 						int start = Integer.parseInt(tiles2[0]);
 						location.start = start;
 						int end = Integer.parseInt(tiles2[1]);
@@ -71,7 +85,7 @@ public class GenomicRegion {
 				} else {
 					// single position
 					GenomicRegion location = new GenomicRegion();
-					location.chromosome = tiles[0];
+					location.chromosome = chromosome(tiles[0], build);
 					int start = Integer.parseInt(tiles[1]);
 					location.start = start;
 					location.end = start;
@@ -84,19 +98,35 @@ public class GenomicRegion {
 		// check if chr
 		if (string.startsWith("chr")) {
 			GenomicRegion location = new GenomicRegion();
-			location.chromosome = string;
+			location.chromosome = chromosome(string, build);
 			location.start = 1;
 			location.end = Integer.MAX_VALUE;
 			return location;
 		}
 
-		// TODO: check if gene
+		// check if string is gene
+		GenomicRegion location = GeneIndex.findGene(string);
+		if (location != null) {
+			return location;
+		}
 
 		throw new IOException("Unknown format.");
 	}
 
 	public String toBedFormat() {
 		return chromosome + "\t" + (start - 1) + "\t" + (end);
+	}
+
+	public static String chromosome(String chromosome, String build) {
+		if (build.equals("hg19")) {
+			return chromosome.replaceAll("chr", "");
+		} else {
+			if (chromosome.contains("chr")) {
+				return chromosome;
+			} else {
+				return "chr" + chromosome;
+			}
+		}
 	}
 
 }
