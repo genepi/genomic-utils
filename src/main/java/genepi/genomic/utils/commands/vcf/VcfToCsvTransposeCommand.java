@@ -71,6 +71,10 @@ public class VcfToCsvTransposeCommand implements Callable<Integer> {
 		this.separator = separator;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public Integer call() throws Exception {
 

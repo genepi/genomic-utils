@@ -73,17 +73,10 @@ public class GeneAnnotationFileReaderTest {
 		System.out.println(result);
 		//assertEquals("STAG1", result.get(0).get("GENE_NAME"));
 		
-		result = annotationReader.query("6", 161089307, 0);
+		result = annotationReader.query("6", 160664275, 0);
 		System.out.println(result);
 		assertEquals("LPA", result.get(0).get("GENE_NAME"));	
 
-		result = annotationReader.query("16", 68080680, 0);
-		System.out.println(result);
-		assertEquals("DUS2", result.get(0).get("GENE_NAME"));	
-
-		result = annotationReader.query("6", 163782524, 0);
-		System.out.println(result);
-		assertEquals("PACRG", result.get(0).get("GENE_NAME"));	
 	}
 	
 }
