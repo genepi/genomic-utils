@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import genepi.genomic.utils.commands.gwas.binner.Bin;
-import genepi.genomic.utils.commands.gwas.binner.ChromBin;
-import genepi.genomic.utils.commands.gwas.binner.Chromosome;
-import genepi.genomic.utils.commands.gwas.binner.Variant;
+import genepi.genomic.utils.commands.gwas.binner.*;
 import genepi.genomic.utils.commands.gwas.util.AnnotationType;
 import genepi.genomic.utils.commands.gwas.util.BinningAlgorithm;
 import genepi.genomic.utils.commands.gwas.util.PlotlyUtil;
@@ -34,8 +31,6 @@ public class ManhattanPlot {
 
 	public static final String[] CHROMOSOME_COLORS = new String[] { "#779ECB", "#03254c" };
 
-	public static final double BIN_SIZE = 3_000_000;
-
 	public static final int CHROMOSOME_GAP = 10;
 
 	public static final int POINT_SIZE = 5;
@@ -47,6 +42,8 @@ public class ManhattanPlot {
 	private double suggestiveSignificanceLine = DEFAULT_SUGGESTIVE_SIGNIFICANCE_LINE;
 
 	private double genomwideSignificanceLine = DEFAULT_GENOMEWIDE_SIGNIFICANCE_LINE;
+
+	private double binSize = Binner.DEFAULT_BIN_SIZE;
 
 	private Map<Integer, ChromBin> bins;
 
@@ -94,6 +91,10 @@ public class ManhattanPlot {
 		this.suggestiveSignificanceLine = suggestiveSignificanceLine;
 	}
 
+	public void setBinSize(double binSize) {
+		this.binSize = binSize;
+	}
+
 	public void setMaxAnnotations(int maxAnnotations) {
 		this.maxAnnotations = maxAnnotations;
 	}
@@ -125,7 +126,7 @@ public class ManhattanPlot {
 			for (Double[] line : singleBin.getLines(binning)) {
 				if (!line[0].equals(line[1])) {
 					countLines++;
-					double x = (singleBin.startpos / BIN_SIZE) + offset;
+					double x = (singleBin.startpos / binSize) + offset;
 					Map<String, Object> shape = PlotlyUtil.createLine(x, mapY(line[0]), x, mapY(line[1]), color,
 							POINT_SIZE);
 					shapes.add(shape);
@@ -146,7 +147,7 @@ public class ManhattanPlot {
 			for (Double[] line : singleBin.getLines(binning)) {
 				if (line[0].equals(line[1])) {
 					countPoints++;
-					double x0 = (singleBin.startpos / BIN_SIZE) + offset;
+					double x0 = (singleBin.startpos / binSize) + offset;
 					x.add(x0);
 					y.add(mapY(line[0]));
 				}
@@ -232,7 +233,7 @@ public class ManhattanPlot {
 		for (int chr : bins.keySet()) {
 			ChromBin bin = bins.get(chr);
 			ticktext.add(bin.chrom);
-			tickvals.add(offset + bins.get(chr).getLength() / BIN_SIZE / 2);
+			tickvals.add(offset + bins.get(chr).getLength() / binSize / 2);
 			offset = updateOffset(offset, chr);
 		}
 		axis.put("tickvals", tickvals);
@@ -275,7 +276,7 @@ public class ManhattanPlot {
 	}
 
 	private long updateOffset(long offset, int chr) {
-		offset += (bins.get(chr).getLength() / BIN_SIZE) + CHROMOSOME_GAP;
+		offset += (bins.get(chr).getLength() / binSize) + CHROMOSOME_GAP;
 		return offset;
 	}
 
@@ -286,13 +287,13 @@ public class ManhattanPlot {
 		List<String> text = new Vector<String>();
 		ChromBin bin = bins.get(chrIndex);
 		for (Variant variant : bin.getUnbinnedVariants()) {
-			x.add((variant.pos / BIN_SIZE) + offset);
+			x.add((variant.pos / binSize) + offset);
 			y.add(mapY(variant.pval));
 			text.add(variant.getDetails());
 
 		}
 		for (Variant variant : bin.getPeakVariants()) {
-			x.add((variant.pos / BIN_SIZE) + offset);
+			x.add((variant.pos / binSize) + offset);
 			y.add(mapY(variant.pval));
 			text.add(variant.getDetails());
 		}
@@ -319,7 +320,7 @@ public class ManhattanPlot {
 		for (Variant variant : bin.getPeakVariants()) {
 			if (variant.pval >= genomwideSignificanceLine) {
 				Map<String, Object> annotation = new HashMap<>();
-				annotation.put("x", (variant.pos / BIN_SIZE) + offset);
+				annotation.put("x", (variant.pos / binSize) + offset);
 				annotation.put("y", mapY(variant.pval));
 				annotation.put("xref", "x");
 				annotation.put("yref", "y");

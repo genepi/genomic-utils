@@ -116,6 +116,10 @@ public class GwasReportCommand implements Callable<Integer> {
 			"--index" }, description = "Create index html file. Possible values: ${COMPLETION-CANDIDATES}", required = false)
 	private IndexCreationMode index = IndexCreationMode.AUTO;
 
+	@Option(names = {
+			"--bin-size" }, description = "Bin Size", required = false, showDefaultValue = Visibility.ALWAYS)
+	private int binSize = Binner.DEFAULT_BIN_SIZE;
+
 	public void setFiles(List<File> files) {
 		this.files = files;
 	}
@@ -142,6 +146,10 @@ public class GwasReportCommand implements Callable<Integer> {
 
 	public void setOutput(File output) {
 		this.output = output;
+	}
+
+	public void setBinSize(int binSize) {
+		this.binSize = binSize;
 	}
 
 	public void setPvalFormat(PValFormat pvalFormat) {
@@ -305,6 +313,7 @@ public class GwasReportCommand implements Callable<Integer> {
 		ref = checkColumn(reader, ref, "ref");
 
 		Binner binner = new Binner(binning);
+		binner.setBinSize(binSize);
 		binner.setPeakPvalThreshold(peakPvalThreshold);
 		binner.setPeakVariantCountingPvalThreshold(peakVariantCountingPvalThreshold);
 
@@ -349,6 +358,7 @@ public class GwasReportCommand implements Callable<Integer> {
 		System.out.println("Processed " + count + " variants.");
 
 		ManhattanPlot data = new ManhattanPlot(binning);
+		data.setBinSize(binSize);
 		data.setBins(binner.getBins());
 		data.setAnnotation(annotation);
 		data.setPeaks(new ArrayList<Variant>(binner.getPeaks()));

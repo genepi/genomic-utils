@@ -13,6 +13,8 @@ public class Binner {
 
 	public static double DEFAULT_PEAK_VARIANT_COUNTING_PVAL_THRESHOLD = -Math.log10(5e-8);
 
+	public static int DEFAULT_BIN_SIZE = 3_000_000;
+
 	private Variant peak_best_variant;
 
 	private ChrPosition peak_last_chrpos;
@@ -37,7 +39,7 @@ public class Binner {
 
 	private int manhattan_num_unbinned = 500;
 
-	private int bin_length = 3_000_000;
+	private int bin_length = DEFAULT_BIN_SIZE;
 
 	private BinningAlgorithm binning;
 
@@ -58,6 +60,10 @@ public class Binner {
 
 	public void setPeakVariantCountingPvalThreshold(double peakVariantCountingPvalThreshold) {
 		this.peakVariantCountingPvalThreshold = peakVariantCountingPvalThreshold;
+	}
+
+	public void setBinSize(int binSize) {
+		bin_length = binSize;
 	}
 
 	public void process_variant(Variant variant) {
